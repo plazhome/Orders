@@ -11,7 +11,7 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://orders-app.onrender.com']
+        ? ['https://orders-app-431y.onrender.com']
         : ['http://localhost:5173', 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
