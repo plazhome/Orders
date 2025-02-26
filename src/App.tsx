@@ -14,6 +14,9 @@ const API_URL = import.meta.env.PROD
   ? 'https://orders-api.onrender.com/api'
   : 'http://localhost:3001/api';
 
+// Admin secret path - in a real app, this would be more secure
+const ADMIN_PATH = 'admin-' + '2024'; // Simple example
+
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +52,7 @@ const App: React.FC = () => {
                 element={<ProductPage products={products} />} 
               />
               <Route 
-                path="/add-product" 
+                path={`/${ADMIN_PATH}/add-product`}
                 element={<AddProduct />} 
               />
               <Route 

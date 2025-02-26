@@ -20,12 +20,6 @@ export const Navigation: React.FC = () => {
                     Products
                 </Link>
                 <Link 
-                    to="/add-product"
-                    className={location.pathname === '/add-product' ? styles.active : ''}
-                >
-                    Add Product
-                </Link>
-                <Link 
                     to="/cart"
                     className={location.pathname === '/cart' ? styles.active : ''}
                 >
