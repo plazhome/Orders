@@ -9,8 +9,8 @@ interface ProductListingProps {
 }
 
 const API_URL = import.meta.env.PROD 
-  ? 'https://tiktok-shop-backend-g9c7.onrender.com'
-  : 'http://localhost:3001';
+  ? 'https://tiktok-shop-backend-g9c7.onrender.com/api'
+  : 'http://localhost:3001/api';
 
 const getImageUrl = (url: string) => {
     if (url.startsWith('http://') || url.startsWith('https://')) {
