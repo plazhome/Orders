@@ -11,9 +11,39 @@ dotenv.config();
 const app = express();
 const port = parseInt(process.env.PORT || '3001', 10);
 
-// Connect to MongoDB
+// Sample product for seeding
+const sampleProduct = {
+    title: 'Test Product',
+    description: 'This is a test product to ensure the system is working correctly',
+    price: 29.99,
+    images: [
+        'https://res.cloudinary.com/dxsebqku9/image/upload/v1/tiktok-shop/placeholder.jpg'
+    ],
+    category: 'Test',
+    tags: ['test', 'sample'],
+    stock: 10,
+    rating: 5,
+    reviews: [],
+    seller: {
+        id: 'test-seller',
+        name: 'Test Seller',
+        avatar: 'https://res.cloudinary.com/dxsebqku9/image/upload/v1/tiktok-shop/default-avatar.jpg'
+    }
+};
+
+// Connect to MongoDB and seed if needed
 mongoose.connect(process.env.MONGODB_URI as string)
-    .then(() => console.log('Connected to MongoDB'))
+    .then(async () => {
+        console.log('Connected to MongoDB');
+        
+        // Check if products exist
+        const existingProducts = await Product.find();
+        if (existingProducts.length === 0) {
+            // Insert sample product if no products exist
+            await Product.create(sampleProduct);
+            console.log('Sample product added successfully');
+        }
+    })
     .catch(err => console.error('MongoDB connection error:', err));
 
 // Middleware
