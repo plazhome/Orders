@@ -32,10 +32,19 @@ const sampleProduct = {
     }
 };
 
-// Connect to MongoDB and seed if needed
-mongoose.connect(process.env.MONGODB_URI as string)
-    .then(async () => {
-        console.log('Connected to MongoDB');
+// MongoDB connection options
+const mongooseOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+};
+
+// MongoDB connection function
+const connectDB = async () => {
+    try {
+        const conn = await mongoose.connect(process.env.MONGODB_URI as string);
+        console.log('MongoDB Connected:', conn.connection.host);
         
         // Check if products exist
         const existingProducts = await Product.find();
@@ -57,8 +66,26 @@ mongoose.connect(process.env.MONGODB_URI as string)
                 console.log('Daily backup created');
             }
         }, 60000); // Check every minute
-    })
-    .catch(err => console.error('MongoDB connection error:', err));
+
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        // Retry connection after 5 seconds
+        setTimeout(connectDB, 5000);
+    }
+};
+
+// Handle MongoDB connection errors
+mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected. Attempting to reconnect...');
+    connectDB();
+});
+
+// Connect to MongoDB
+connectDB();
 
 // Middleware
 app.use(cors({
@@ -82,6 +109,17 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
     res.json({ status: 'API is running' });
 });
+
+// Check MongoDB connection middleware
+const checkDBConnection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ error: 'Database connection not ready' });
+    }
+    next();
+};
+
+// Apply DB connection check to all /api/products routes
+app.use('/api/products', checkDBConnection);
 
 // Product Management Routes
 app.get('/api/products', async (req, res) => {
