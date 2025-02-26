@@ -27,6 +27,15 @@ const productSchema = new mongoose.Schema({
         name: String,
         avatar: String
     }
+}, {
+    toJSON: {
+        transform: function(doc, ret) {
+            ret.id = ret._id.toString();
+            delete ret._id;
+            delete ret.__v;
+            return ret;
+        }
+    }
 });
 
 export const Product = mongoose.model('Product', productSchema); 

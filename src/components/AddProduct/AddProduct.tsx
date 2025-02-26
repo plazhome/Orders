@@ -7,7 +7,11 @@ const API_URL = import.meta.env.PROD
   ? 'https://tiktok-shop-backend-g9c7.onrender.com/api'
   : 'http://localhost:3001/api';
 
-export const AddProduct: React.FC = () => {
+interface AddProductProps {
+    onProductAdded: () => Promise<void>;
+}
+
+export const AddProduct: React.FC<AddProductProps> = ({ onProductAdded }) => {
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoInputRef = useRef<HTMLInputElement>(null);
@@ -127,6 +131,9 @@ export const AddProduct: React.FC = () => {
 
             const newProduct = await response.json();
             console.log('Product created:', newProduct);
+            
+            // Call onProductAdded to refresh the products list
+            await onProductAdded();
             
             // Navigate back to product listing
             navigate('/');

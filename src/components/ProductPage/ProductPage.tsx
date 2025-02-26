@@ -7,6 +7,7 @@ import styles from './ProductPage.module.scss';
 
 interface ProductPageProps {
     products: Product[];
+    onProductsChange: () => Promise<void>;
 }
 
 const API_URL = import.meta.env.PROD 
@@ -22,7 +23,7 @@ const getImageUrl = (url: string) => {
     }
 };
 
-export const ProductPage: React.FC<ProductPageProps> = ({ products }) => {
+export const ProductPage: React.FC<ProductPageProps> = ({ products, onProductsChange }) => {
     const { productId } = useParams<{ productId: string }>();
     const navigate = useNavigate();
     const { isAdmin } = useAdmin();
@@ -99,8 +100,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ products }) => {
 
             if (!response.ok) throw new Error('Failed to update product');
 
-            // Refresh the page to show updated data
-            window.location.reload();
+            // Refresh the products list
+            await onProductsChange();
+            
+            // Navigate back to product listing
+            navigate('/');
         } catch (error) {
             console.error('Error updating product:', error);
         }
@@ -118,6 +122,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ products }) => {
 
             if (!response.ok) throw new Error('Failed to delete product');
 
+            // Refresh the products list
+            await onProductsChange();
+            
+            // Navigate back to product listing
             navigate('/');
         } catch (error) {
             console.error('Error deleting product:', error);

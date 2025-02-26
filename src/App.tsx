@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ProductListing } from './components/ProductListing/ProductListing';
 import { ProductPage } from './components/ProductPage/ProductPage';
@@ -21,6 +21,20 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchProducts = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_URL}/products`);
+      if (!response.ok) throw new Error('Failed to fetch products');
+      const data = await response.json();
+      console.log('Fetched products:', data);
+      setProducts(data);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch products');
+    }
+  }, []);
+
   useEffect(() => {
     const checkAPI = async () => {
       try {
@@ -29,12 +43,7 @@ const App: React.FC = () => {
         if (!healthCheck.ok) throw new Error('API is starting up...');
 
         // Then fetch products
-        const response = await fetch(`${API_URL}/products`);
-        if (!response.ok) throw new Error('Failed to fetch products');
-        
-        const data = await response.json();
-        setProducts(data);
-        setError(null);
+        await fetchProducts();
       } catch (error) {
         console.error('Error:', error);
         setError(error instanceof Error ? error.message : 'An error occurred');
@@ -44,7 +53,7 @@ const App: React.FC = () => {
     };
 
     checkAPI();
-  }, []);
+  }, [fetchProducts]);
 
   if (loading) {
     return (
@@ -75,11 +84,11 @@ const App: React.FC = () => {
               <Routes>
                 <Route 
                   path="/" 
-                  element={<ProductListing products={products} />} 
+                  element={<ProductListing products={products} onProductsChange={fetchProducts} />} 
                 />
                 <Route 
                   path="/product/:productId" 
-                  element={<ProductPage products={products} />} 
+                  element={<ProductPage products={products} onProductsChange={fetchProducts} />} 
                 />
                 <Route 
                   path="/admin"
@@ -87,7 +96,7 @@ const App: React.FC = () => {
                 />
                 <Route 
                   path="/admin/dashboard"
-                  element={<AdminDashboard />} 
+                  element={<AdminDashboard onProductsChange={fetchProducts} />} 
                 />
                 <Route 
                   path="/cart"

@@ -4,7 +4,11 @@ import { useAdmin } from '../../context/AdminContext';
 import { AddProduct } from '../AddProduct/AddProduct';
 import styles from './Admin.module.scss';
 
-export const AdminDashboard: React.FC = () => {
+interface AdminDashboardProps {
+    onProductsChange: () => Promise<void>;
+}
+
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onProductsChange }) => {
     const { logout } = useAdmin();
     const navigate = useNavigate();
 
@@ -21,7 +25,7 @@ export const AdminDashboard: React.FC = () => {
                     Logout
                 </button>
             </div>
-            <AddProduct />
+            <AddProduct onProductAdded={onProductsChange} />
         </div>
     );
 }; 

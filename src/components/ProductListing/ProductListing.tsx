@@ -6,6 +6,7 @@ import styles from './ProductListing.module.scss';
 
 interface ProductListingProps {
     products: Product[];
+    onProductsChange: () => Promise<void>;
 }
 
 const API_URL = import.meta.env.PROD 
@@ -20,7 +21,7 @@ const getImageUrl = (url: string) => {
     }
 };
 
-export const ProductListing: React.FC<ProductListingProps> = ({ products }) => {
+export const ProductListing: React.FC<ProductListingProps> = ({ products, onProductsChange }) => {
     const navigate = useNavigate();
     const { addToCart } = useContext(CartContext);
     const [activeIndex, setActiveIndex] = useState(0);
