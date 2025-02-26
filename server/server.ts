@@ -9,7 +9,7 @@ import { Product } from './models/Product';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = parseInt(process.env.PORT || '3001', 10);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI as string)
@@ -94,6 +94,9 @@ app.get('/api/products/:id', async (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('MongoDB URI:', process.env.MONGODB_URI ? 'Set' : 'Not set');
+    console.log('Cloudinary Config:', process.env.CLOUDINARY_CLOUD_NAME ? 'Set' : 'Not set');
 }); 
