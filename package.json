@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "cd server && npm install && npm run build && cd .. && npm install && tsc && vite build && cp public/_redirects dist/",
+    "build": "cd server && npm install && npm run build && cd .. && npm install && tsc && vite build && cp static.json dist/",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "cd server && npm start"
