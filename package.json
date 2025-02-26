@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "powershell ./start-dev.ps1",
-    "build": "cd server && npm install && npm run build",
+    "build": "cd server && npm install && npm run build && cd .. && npm install && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "cd server && npm start"
