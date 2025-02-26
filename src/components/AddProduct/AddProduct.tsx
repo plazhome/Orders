@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Product } from '../../types/product';
 import styles from './AddProduct.module.scss';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = import.meta.env.PROD 
+  ? 'https://orders-api-431y.onrender.com/api'
+  : 'http://localhost:3001/api';
 
 export const AddProduct: React.FC = () => {
     const navigate = useNavigate();

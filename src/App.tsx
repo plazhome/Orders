@@ -13,7 +13,7 @@ import './App.scss';
 
 // API URL based on environment
 const API_URL = import.meta.env.PROD 
-  ? 'https://orders-api.onrender.com/api'
+  ? 'https://orders-api-431y.onrender.com/api'
   : 'http://localhost:3001/api';
 
 const App: React.FC = () => {

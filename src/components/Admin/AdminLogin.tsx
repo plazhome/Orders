@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import styles from './Admin.module.scss';
 
+const API_URL = import.meta.env.PROD 
+  ? 'https://orders-api-431y.onrender.com/api'
+  : 'http://localhost:3001/api';
+
 export const AdminLogin: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -12,7 +16,7 @@ export const AdminLogin: React.FC = () => {
 
     useEffect(() => {
         // Test API connection on component mount
-        fetch('https://orders-api.onrender.com/api')
+        fetch(API_URL)
             .then(() => setIsLoading(false))
             .catch(() => {
                 setError('Server is starting up, please wait...');

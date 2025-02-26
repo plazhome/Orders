@@ -8,12 +8,16 @@ interface ProductPageProps {
     products: Product[];
 }
 
+const API_URL = import.meta.env.PROD 
+  ? 'https://orders-api-431y.onrender.com'
+  : 'http://localhost:3001';
+
 // Helper function to construct proper image URLs
 const getImageUrl = (url: string) => {
     if (url.startsWith('http://') || url.startsWith('https://')) {
         return url;
     } else {
-        return `http://localhost:3001${url}`;
+        return `${API_URL}${url}`;
     }
 };
 
