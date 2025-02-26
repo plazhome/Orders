@@ -1,0 +1,175 @@
+@use './styles/variables' as *;
+@use "sass:color";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden; // Prevent horizontal scrolling
+  background-color: $background-dark;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: $text-primary;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: $background-dark;
+}
+
+.main-content {
+  flex: 1;
+  width: 100vw;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background-color: $background-dark;
+  margin: 0;
+  padding: 0;
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+// Page container - use this for consistent page layouts
+.page-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  flex: 1;
+  min-height: 100vh;
+
+  @media (max-width: $breakpoint-md) {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
+// Global button styles
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent; // Remove tap highlight on mobile
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.5);
+  }
+}
+
+// Global input styles
+input {
+  font-family: inherit;
+  -webkit-appearance: none; // Fix iOS input styles
+  border-radius: 0; // Fix iOS input styles
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.5);
+  }
+}
+
+// Global link styles
+a {
+  color: $primary-color;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent; // Remove tap highlight on mobile
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Scrollbar styling
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+
+  @media (max-width: $breakpoint-md) {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: $primary-color;
+  border-radius: 4px;
+  
+  &:hover {
+    background: color.adjust($primary-color, $lightness: -10%);
+  }
+}
+
+// Utility classes
+.text-primary {
+  color: $text-primary;
+}
+
+.text-secondary {
+  color: $text-secondary;
+}
+
+.text-primary-color {
+  color: $primary-color;
+}
+
+// Animation keyframes
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Animation utility classes
+.fade-in {
+  animation: fadeIn $transition-normal forwards;
+}
+
+.slide-up {
+  animation: slideUp $transition-normal forwards;
+}
+
+// Fix iOS safe areas
+@supports (padding: max(0px)) {
+  .app {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+} 

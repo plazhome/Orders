@@ -1,0 +1,46 @@
+[
+  {
+    "title": "ewewe",
+    "description": "ewewew",
+    "price": 12,
+    "category": "dede",
+    "tags": [
+      "2121"
+    ],
+    "stock": 11,
+    "seller": {
+      "id": "current-user-id",
+      "name": "Current User",
+      "avatar": "/images/default-avatar.jpg"
+    },
+    "id": "1740531828918",
+    "images": [
+      "/uploads/1740531828915-Bluegrey-plate-flowers.jpg"
+    ],
+    "createdAt": "2025-02-26T01:03:48.918Z",
+    "rating": 0,
+    "reviews": []
+  },
+  {
+    "title": "e3de",
+    "description": "deded",
+    "price": 1112,
+    "category": "ded",
+    "tags": [
+      "dede"
+    ],
+    "stock": 22,
+    "seller": {
+      "id": "current-user-id",
+      "name": "Current User",
+      "avatar": "/images/default-avatar.jpg"
+    },
+    "id": "1740532147953",
+    "images": [
+      "/uploads/1740532147951-browngrey-plate-diamonds.jpg"
+    ],
+    "createdAt": "2025-02-26T01:09:07.953Z",
+    "rating": 0,
+    "reviews": []
+  }
+]

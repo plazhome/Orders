@@ -1,0 +1,71 @@
+@use '../../styles/variables' as *;
+@use "sass:color";
+
+.navigation {
+    background-color: $card-background;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: $z-index-sticky;
+    box-shadow: $shadow-md;
+
+    .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+
+        a {
+            color: $primary-color;
+            text-decoration: none;
+            
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+
+    .links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+
+        a {
+            color: $text-secondary;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: $border-radius;
+            transition: all $transition-fast;
+
+            &:hover {
+                color: $text-primary;
+                background-color: rgba($primary-color, 0.1);
+            }
+
+            &.active {
+                color: $primary-color;
+                background-color: rgba($primary-color, 0.1);
+            }
+        }
+    }
+
+    @media (max-width: $breakpoint-md) {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+
+        .links {
+            width: 100%;
+            justify-content: space-around;
+            gap: 0.5rem;
+
+            a {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+                text-align: center;
+            }
+        }
+    }
+} 
