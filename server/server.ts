@@ -1,12 +1,20 @@
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import path from 'path';
-import * as fs from 'fs';
-import { Product } from './types';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import { storage } from './config/cloudinary';
+import { Product } from './models/Product';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI as string)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
 // Middleware
 app.use(cors({
@@ -17,7 +25,9 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
+
+// Configure multer with Cloudinary storage
+const upload = multer({ storage });
 
 // Welcome route
 app.get('/', (req, res) => {
@@ -29,76 +39,39 @@ app.get('/api', (req, res) => {
     res.json({ status: 'API is running' });
 });
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const dir = 'uploads';
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-        }
-        cb(null, dir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-
-const upload = multer({ storage });
-
-// Load products from JSON file
-const productsFile = path.join(__dirname, 'products.json');
-let products: Product[] = [];
-
-try {
-    if (fs.existsSync(productsFile)) {
-        const data = fs.readFileSync(productsFile, 'utf8');
-        products = JSON.parse(data);
-    }
-} catch (error) {
-    console.error('Error loading products:', error);
-    // Initialize with empty array if file doesn't exist
-    products = [];
-}
-
-// Save products to JSON file
-const saveProducts = () => {
-    try {
-        fs.writeFileSync(productsFile, JSON.stringify(products, null, 2));
-    } catch (error) {
-        console.error('Error saving products:', error);
-    }
-};
-
 // Routes
-app.get('/api/products', (req, res) => {
-    res.json(products);
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.json(products);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ error: 'Failed to fetch products' });
+    }
 });
 
 app.post('/api/products', upload.fields([
     { name: 'images', maxCount: 5 },
     { name: 'video', maxCount: 1 }
-]), (req, res) => {
+]), async (req, res) => {
     try {
         const productData = JSON.parse(req.body.product);
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-        // Process uploaded files
-        const imageUrls = files['images']?.map(file => `/uploads/${file.filename}`) || [];
-        const videoUrl = files['video']?.[0] ? `/uploads/${files['video'][0].filename}` : undefined;
+        // Get Cloudinary URLs
+        const imageUrls = files['images']?.map(file => file.path) || [];
+        const videoUrl = files['video']?.[0]?.path;
 
-        const newProduct: Product = {
+        const newProduct = new Product({
             ...productData,
-            id: Date.now().toString(),
             images: imageUrls,
             videoUrl,
             createdAt: new Date().toISOString(),
             rating: 0,
             reviews: []
-        };
+        });
 
-        products.push(newProduct);
-        saveProducts();
-
+        await newProduct.save();
         res.status(201).json(newProduct);
     } catch (error) {
         console.error('Error creating product:', error);
@@ -106,12 +79,17 @@ app.post('/api/products', upload.fields([
     }
 });
 
-app.get('/api/products/:id', (req, res) => {
-    const product = products.find(p => p.id === req.params.id);
-    if (product) {
-        res.json(product);
-    } else {
-        res.status(404).json({ error: 'Product not found' });
+app.get('/api/products/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (product) {
+            res.json(product);
+        } else {
+            res.status(404).json({ error: 'Product not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        res.status(500).json({ error: 'Failed to fetch product' });
     }
 });
 

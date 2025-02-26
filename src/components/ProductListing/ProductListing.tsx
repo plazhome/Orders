@@ -63,19 +63,10 @@ export const ProductListing: React.FC<ProductListingProps> = ({ products }) => {
                         <div className={styles.productInfo}>
                             <div className={styles.productHeader}>
                                 <h3>{product.title}</h3>
-                                <span className={styles.price}>${product.price}</span>
+                                <span className={styles.price}>€{product.price}</span>
                             </div>
                             <p className={styles.description}>{product.description}</p>
-                            <div className={styles.seller}>
-                                <img 
-                                    src={getImageUrl(product.seller.avatar)} 
-                                    alt={product.seller.name}
-                                    className={styles.sellerAvatar}
-                                />
-                                <span>{product.seller.name}</span>
-                            </div>
                             <div className={styles.stats}>
-                                <span className={styles.rating}>★ {product.rating}</span>
                                 <span className={styles.stock}>
                                     {product.stock} in stock
                                 </span>

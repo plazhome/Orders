@@ -99,15 +99,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ products }) => {
             <div className={styles.infoSection}>
                 <div className={styles.header}>
                     <h1>{product.title}</h1>
-                    <div className={styles.price}>${product.price}</div>
-                </div>
-
-                <div className={styles.sellerInfo}>
-                    <img src={getImageUrl(product.seller.avatar)} alt={product.seller.name} />
-                    <div className={styles.sellerDetails}>
-                        <span className={styles.sellerName}>{product.seller.name}</span>
-                        <span className={styles.rating}>★ {product.rating} Rating</span>
-                    </div>
+                    <div className={styles.price}>€{product.price}</div>
                 </div>
 
                 <p className={styles.description}>{product.description}</p>
