@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import styles from './Admin.module.scss';
@@ -6,18 +6,43 @@ import styles from './Admin.module.scss';
 export const AdminLogin: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     const { login } = useAdmin();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        // Test API connection on component mount
+        fetch('https://orders-api.onrender.com/api')
+            .then(() => setIsLoading(false))
+            .catch(() => {
+                setError('Server is starting up, please wait...');
+                setIsLoading(false);
+            });
+    }, []);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         const success = login(password);
         if (success) {
             navigate('/admin/dashboard');
         } else {
             setError('Invalid password');
+            setIsLoading(false);
         }
     };
+
+    if (isLoading) {
+        return (
+            <div className={styles.adminLogin}>
+                <div className={styles.loading}>
+                    <div className={styles.spinner}></div>
+                    <p>Please wait while the server starts up...</p>
+                    <p className={styles.note}>This may take up to 60 seconds on the first load.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.adminLogin}>
@@ -34,7 +59,9 @@ export const AdminLogin: React.FC = () => {
                         required
                     />
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? 'Loading...' : 'Login'}
+                </button>
             </form>
         </div>
     );

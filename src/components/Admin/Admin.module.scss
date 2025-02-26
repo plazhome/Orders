@@ -13,6 +13,31 @@
         margin-bottom: 2rem;
     }
 
+    .loading {
+        text-align: center;
+        padding: 2rem;
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            border: 3px solid rgba($primary-color, 0.3);
+            border-radius: 50%;
+            border-top-color: $primary-color;
+            animation: spin 1s linear infinite;
+        }
+
+        p {
+            margin: 0.5rem 0;
+            color: $text-secondary;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+    }
+
     .error {
         background-color: rgba(red, 0.1);
         color: #ff4d4f;
@@ -54,9 +79,20 @@
         cursor: pointer;
         font-weight: 500;
 
-        &:hover {
+        &:hover:not(:disabled) {
             background-color: darken($primary-color, 10%);
         }
+
+        &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 
