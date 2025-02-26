@@ -398,4 +398,90 @@
             }
         }
     }
+}
+
+.adminControls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all $transition-fast;
+
+        &:first-child {
+            background-color: $primary-color;
+            color: white;
+
+            &:hover {
+                background-color: color.adjust($primary-color, $lightness: -10%);
+            }
+        }
+
+        &.deleteButton {
+            background-color: #dc3545;
+            color: white;
+
+            &:hover {
+                background-color: color.adjust(#dc3545, $lightness: -10%);
+            }
+        }
+    }
+}
+
+.editForm {
+    background-color: rgba($background-dark, 0.5);
+    padding: 2rem;
+    border-radius: $border-radius;
+    margin-bottom: 2rem;
+
+    .formGroup {
+        margin-bottom: 1.5rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: $text-secondary;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: $background-dark;
+            border: 1px solid rgba($text-secondary, 0.2);
+            border-radius: $border-radius-sm;
+            color: $text-primary;
+
+            &:focus {
+                border-color: $primary-color;
+                outline: none;
+            }
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+    }
+
+    .submitButton {
+        width: 100%;
+        padding: 1rem;
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all $transition-fast;
+
+        &:hover {
+            background-color: color.adjust($primary-color, $lightness: -10%);
+        }
+    }
 } 

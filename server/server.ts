@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { storage } from './config/cloudinary';
 import { Product } from './models/Product';
+import { backupProducts } from './backup';
 
 dotenv.config();
 
@@ -43,6 +44,19 @@ mongoose.connect(process.env.MONGODB_URI as string)
             await Product.create(sampleProduct);
             console.log('Sample product added successfully');
         }
+
+        // Create automatic backup
+        await backupProducts();
+        console.log('Automatic backup created');
+
+        // Schedule daily backups at midnight
+        setInterval(async () => {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                await backupProducts();
+                console.log('Daily backup created');
+            }
+        }, 60000); // Check every minute
     })
     .catch(err => console.error('MongoDB connection error:', err));
 
@@ -69,7 +83,7 @@ app.get('/api', (req, res) => {
     res.json({ status: 'API is running' });
 });
 
-// Routes
+// Product Management Routes
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
@@ -102,10 +116,66 @@ app.post('/api/products', upload.fields([
         });
 
         await newProduct.save();
+        await backupProducts(); // Create backup after adding product
         res.status(201).json(newProduct);
     } catch (error) {
         console.error('Error creating product:', error);
         res.status(500).json({ error: 'Failed to create product' });
+    }
+});
+
+// New route for updating a product
+app.put('/api/products/:id', upload.fields([
+    { name: 'images', maxCount: 5 },
+    { name: 'video', maxCount: 1 }
+]), async (req, res) => {
+    try {
+        const productData = JSON.parse(req.body.product);
+        const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+        // Get new Cloudinary URLs if files were uploaded
+        const imageUrls = files['images']?.map(file => file.path);
+        const videoUrl = files['video']?.[0]?.path;
+
+        // Only update media URLs if new files were uploaded
+        const updateData = {
+            ...productData,
+            ...(imageUrls && { images: imageUrls }),
+            ...(videoUrl && { videoUrl })
+        };
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        await backupProducts(); // Create backup after updating product
+        res.json(updatedProduct);
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ error: 'Failed to update product' });
+    }
+});
+
+// New route for deleting a product
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+        
+        if (!deletedProduct) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        await backupProducts(); // Create backup after deleting product
+        res.json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ error: 'Failed to delete product' });
     }
 });
 
