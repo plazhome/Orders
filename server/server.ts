@@ -19,7 +19,12 @@ app.use('/uploads', express.static('uploads'));
 
 // Welcome route
 app.get('/', (req, res) => {
-    res.send('TikTok Shop API is running!');
+    res.json({ message: 'TikTok Shop API is running!' });
+});
+
+// Test route for health check
+app.get('/api', (req, res) => {
+    res.json({ status: 'API is running' });
 });
 
 // Configure multer for file uploads
@@ -49,6 +54,8 @@ try {
     }
 } catch (error) {
     console.error('Error loading products:', error);
+    // Initialize with empty array if file doesn't exist
+    products = [];
 }
 
 // Save products to JSON file

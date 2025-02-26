@@ -19,21 +19,51 @@ const API_URL = import.meta.env.PROD
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/products`)
-      .then((res) => res.json())
-      .then((data: Product[]) => {
+    const checkAPI = async () => {
+      try {
+        // First check if API is running
+        const healthCheck = await fetch(`${API_URL}`);
+        if (!healthCheck.ok) throw new Error('API is starting up...');
+
+        // Then fetch products
+        const response = await fetch(`${API_URL}/products`);
+        if (!response.ok) throw new Error('Failed to fetch products');
+        
+        const data = await response.json();
         setProducts(data);
+        setError(null);
+      } catch (error) {
+        console.error('Error:', error);
+        setError(error instanceof Error ? error.message : 'An error occurred');
+      } finally {
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching products:', error);
-        setLoading(false);
-      });
+      }
+    };
+
+    checkAPI();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Please wait while the server starts up...</p>
+        <p className="loading-note">This may take up to 60 seconds on the first load.</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
+  }
 
   return (
     <AdminProvider>
