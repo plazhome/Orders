@@ -4,7 +4,7 @@ import { Product } from '../../types/product';
 import styles from './AddProduct.module.scss';
 
 const API_URL = import.meta.env.PROD 
-  ? 'https://orders-api-431y.onrender.com/api'
+  ? 'https://tiktok-shop-backend-g9c7.onrender.com/api'
   : 'http://localhost:3001/api';
 
 export const AddProduct: React.FC = () => {

@@ -13,7 +13,7 @@ import './App.scss';
 
 // API URL based on environment
 const API_URL = import.meta.env.PROD 
-  ? 'https://orders-api-431y.onrender.com/api'
+  ? 'https://tiktok-shop-backend-g9c7.onrender.com/api'
   : 'http://localhost:3001/api';
 
 const App: React.FC = () => {
