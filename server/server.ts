@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_URI as string)
 // Middleware
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://orders-app-431y.onrender.com']
+        ? ['https://orders-app-431y.onrender.com', 'https://tiktok-shop-frontend.onrender.com']
         : ['http://localhost:5173', 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
