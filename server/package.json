@@ -8,7 +8,9 @@
     "build": "tsc",
     "dev": "nodemon server.ts",
     "postinstall": "npm run build",
-    "seed": "ts-node seed.ts"
+    "seed": "ts-node seed.ts",
+    "backup": "ts-node backup.ts backup",
+    "restore": "ts-node backup.ts restore"
   },
   "dependencies": {
     "@types/cors": "^2.8.17",
