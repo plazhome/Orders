@@ -1,0 +1,94 @@
+@use '../../styles/variables' as *;
+
+.adminLogin {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: $card-background;
+    border-radius: $border-radius;
+    color: $text-primary;
+
+    h1 {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .error {
+        background-color: rgba(red, 0.1);
+        color: #ff4d4f;
+        padding: 0.5rem;
+        border-radius: $border-radius-sm;
+        margin-bottom: 1rem;
+    }
+
+    .formGroup {
+        margin-bottom: 1rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid rgba($text-secondary, 0.2);
+            background-color: $background-dark;
+            color: $text-primary;
+            border-radius: $border-radius-sm;
+
+            &:focus {
+                border-color: $primary-color;
+                outline: none;
+            }
+        }
+    }
+
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+        font-weight: 500;
+
+        &:hover {
+            background-color: darken($primary-color, 10%);
+        }
+    }
+}
+
+.adminDashboard {
+    padding: 2rem;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba($text-secondary, 0.2);
+
+        h1 {
+            margin: 0;
+            color: $text-primary;
+        }
+
+        .logoutButton {
+            padding: 0.5rem 1rem;
+            background-color: transparent;
+            border: 1px solid $primary-color;
+            color: $primary-color;
+            border-radius: $border-radius;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background-color: $primary-color;
+                color: white;
+            }
+        }
+    }
+} 

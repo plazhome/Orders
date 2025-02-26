@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ProductListing } from './components/ProductListing/ProductListing';
 import { ProductPage } from './components/ProductPage/ProductPage';
-import { AddProduct } from './components/AddProduct/AddProduct';
 import { Navigation } from './components/Navigation/Navigation';
 import { Product } from './types/product';
 import { CartProvider } from './context/CartContext';
+import { AdminProvider } from './context/AdminContext';
+import { AdminLogin } from './components/Admin/AdminLogin';
+import { AdminDashboard } from './components/Admin/AdminDashboard';
 import { Cart } from './components/Cart/Cart';
 import './App.scss';
 
@@ -13,9 +15,6 @@ import './App.scss';
 const API_URL = import.meta.env.PROD 
   ? 'https://orders-api.onrender.com/api'
   : 'http://localhost:3001/api';
-
-// Admin secret path - in a real app, this would be more secure
-const ADMIN_PATH = 'admin-' + '2024'; // Simple example
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -37,37 +36,43 @@ const App: React.FC = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <CartProvider>
-      <Router>
-        <div className="app">
-          <Navigation />
-          <main className="main-content">
-            <Routes>
-              <Route 
-                path="/" 
-                element={<ProductListing products={products} />} 
-              />
-              <Route 
-                path="/product/:productId" 
-                element={<ProductPage products={products} />} 
-              />
-              <Route 
-                path={`/${ADMIN_PATH}/add-product`}
-                element={<AddProduct />} 
-              />
-              <Route 
-                path="/cart"
-                element={<Cart />} 
-              />
-              <Route 
-                path="*" 
-                element={<Navigate to="/" replace />} 
-              />
-            </Routes>
-          </main>
-        </div>
-      </Router>
-    </CartProvider>
+    <AdminProvider>
+      <CartProvider>
+        <Router>
+          <div className="app">
+            <Navigation />
+            <main className="main-content">
+              <Routes>
+                <Route 
+                  path="/" 
+                  element={<ProductListing products={products} />} 
+                />
+                <Route 
+                  path="/product/:productId" 
+                  element={<ProductPage products={products} />} 
+                />
+                <Route 
+                  path="/admin"
+                  element={<AdminLogin />} 
+                />
+                <Route 
+                  path="/admin/dashboard"
+                  element={<AdminDashboard />} 
+                />
+                <Route 
+                  path="/cart"
+                  element={<Cart />} 
+                />
+                <Route 
+                  path="*" 
+                  element={<Navigate to="/" replace />} 
+                />
+              </Routes>
+            </main>
+          </div>
+        </Router>
+      </CartProvider>
+    </AdminProvider>
   );
 };
 
