@@ -5,9 +5,9 @@
   "description": "TikTok Shop Application",
   "type": "module",
   "scripts": {
-    "dev": "powershell ./start-dev.ps1",
+    "dev": "vite",
     "build": "cd server && npm install && npm run build && cd .. && npm install && vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "cd server && npm start"
   },

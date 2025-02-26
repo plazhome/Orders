@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "nodemon server.ts"
+    "dev": "nodemon server.ts",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "cors": "^2.8.5",
