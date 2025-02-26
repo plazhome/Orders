@@ -11,7 +11,7 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://your-frontend-domain.vercel.app']  // We'll update this with actual domain
+        ? ['https://orders-app.onrender.com', 'https://orders-api.onrender.com']
         : ['http://localhost:5173']
 }));
 app.use(express.json());
@@ -108,5 +108,5 @@ app.get('/api/products/:id', (req, res) => {
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running on port ${port}`);
 }); 
