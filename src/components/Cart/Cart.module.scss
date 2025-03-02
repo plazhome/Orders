@@ -1,560 +1,61 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .cartContainer {
-  padding: 1.5rem;
-  max-width: 1200px;
+  padding: 2rem;
+  background-color: $card-background;
+  color: $text-primary;
+  border-radius: $border-radius;
+  max-width: 800px;
   margin: 0 auto;
-  color: $text-color;
   
-  @media (max-width: 768px) {
-    padding: 1rem 0.5rem;
+  @media (max-width: $breakpoint-md) {
+    padding: 1.5rem;
   }
-}
-
-.pageTitle {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  color: $primary-color;
   
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+  @media (max-width: $breakpoint-sm) {
+    padding: 1rem;
   }
-}
-
-.cartContent {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-/* Cart items section */
-.cartItems {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 .cartList {
   list-style: none;
-  padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  padding: 0;
 }
 
 .cartItem {
-  display: grid;
-  grid-template-columns: 80px 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 1.5rem;
   padding: 1rem;
-  background-color: $card-bg-color;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid $border-color;
   
-  @media (max-width: 768px) {
-    grid-template-columns: 60px 1fr;
-    grid-template-rows: auto auto;
-    gap: 1rem;
-  }
-  
-  .itemImage {
-    width: 80px;
-    height: 80px;
-    border-radius: 6px;
-    overflow: hidden;
-    
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    @media (max-width: 768px) {
-      width: 60px;
-      height: 60px;
-    }
-  }
-  
-  .itemDetails {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    
-    h3 {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-    
-    .itemPrice {
-      margin: 0;
-      color: $text-light-color;
-    }
-  }
-  
-  .itemActions {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.75rem;
-    
-    @media (max-width: 768px) {
-      grid-column: span 2;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .quantityControl {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      
-      .quantityButton {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 28px;
-        height: 28px;
-        border-radius: 4px;
-        border: 1px solid $border-color;
-        background-color: transparent;
-        color: $text-color;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-        
-        &:hover {
-          background-color: $primary-color;
-          color: white;
-          border-color: $primary-color;
-        }
-      }
-      
-      .quantity {
-        width: 30px;
-        text-align: center;
-        font-weight: 500;
-      }
-    }
-    
-    .itemTotal {
-      margin: 0;
-      font-weight: bold;
-      color: $accent-color;
-    }
-    
-    .removeItem {
-      background-color: transparent;
-      border: none;
-      color: $danger-color;
-      cursor: pointer;
-      padding: 5px;
-      font-size: 0.9rem;
-      transition: color 0.2s ease-in-out;
-      
-      &:hover {
-        color: lighten($danger-color, 10%);
-        text-decoration: underline;
-      }
-    }
+  &:last-child {
+    border-bottom: none;
   }
 }
 
-.cartActions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .continueShoppingButton, .clearCartButton {
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
-    
-    @media (max-width: 768px) {
-      width: 100%;
-    }
-  }
-  
-  .continueShoppingButton {
-    background-color: transparent;
-    border: 1px solid $border-color;
-    color: $text-color;
-    
-    &:hover {
-      background-color: $background-color-light;
-    }
-  }
-  
-  .clearCartButton {
-    background-color: transparent;
-    border: 1px solid $danger-color;
-    color: $danger-color;
-    
-    &:hover {
-      background-color: $danger-color;
-      color: white;
-    }
-  }
+.totalPrice {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: darken($card-background, 5%);
+  border-radius: $border-radius-sm;
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
-/* Cart summary section */
-.cartSummaryContainer {
-  margin-top: 1rem;
-}
-
-.cartSummary {
-  padding: 1.5rem;
-  background-color: $card-bg-color;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  
-  h2 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    color: $primary-color;
-  }
-  
-  .summaryRow {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    
-    span:first-child {
-      color: $text-light-color;
-    }
-    
-    span:last-child {
-      font-weight: 500;
-    }
-  }
-  
-  .totalRow {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid $border-color;
-    font-size: 1.2rem;
-    
-    span {
-      font-weight: bold !important;
-      color: $text-color !important;
-    }
-    
-    span:last-child {
-      color: $accent-color !important;
-    }
-  }
-  
-  .proceedButton {
-    width: 100%;
-    padding: 0.9rem;
-    margin-top: 1.5rem;
-    background-color: $primary-color;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-    
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
-    
-    &:disabled {
-      background-color: $border-color;
-      cursor: not-allowed;
-    }
-  }
-}
-
-/* Empty cart */
-.emptyCart {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 3rem 1rem;
-  
-  .emptyCartIcon {
-    color: $text-light-color;
-    margin-bottom: 1.5rem;
-  }
-  
-  h2 {
-    margin-bottom: 0.75rem;
-    color: $text-color;
-  }
-  
-  p {
-    margin-bottom: 2rem;
-    color: $text-light-color;
-  }
-  
-  .shopButton {
-    padding: 0.9rem 2rem;
-    background-color: $primary-color;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-    
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
-  }
-}
-
-/* Checkout section */
-.checkoutContainer {
+.orderForm {
+  margin-top: 2rem;
   display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
   
-  @media (max-width: 992px) {
+  @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
-  }
-}
-
-.checkoutMain {
-  flex: 1;
-}
-
-.checkoutSummary {
-  width: 100%;
-  
-  @media (max-width: 992px) {
-    order: -1; // Move summary above form on mobile
-  }
-}
-
-.checkoutForm {
-  padding: 1.5rem;
-  background-color: $card-bg-color;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  
-  .formSection {
-    margin-bottom: 2rem;
-    
-    h2 {
-      font-size: 1.3rem;
-      margin-top: 0;
-      margin-bottom: 1.5rem;
-      color: $primary-color;
-    }
-  }
-  
-  .formRow {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1rem;
-    margin-bottom: 1rem;
   }
   
-  .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    
-    label {
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-    
-    input, textarea {
-      padding: 0.75rem;
-      border: 1px solid $border-color;
-      border-radius: 4px;
-      background-color: $background-color;
-      color: $text-color;
-      font-size: 1rem;
-      
-      &:focus {
-        outline: none;
-        border-color: $primary-color;
-        box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
-      }
-    }
-    
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    .errorInput {
-      border-color: $danger-color;
-      
-      &:focus {
-        box-shadow: 0 0 0 2px rgba($danger-color, 0.25);
-      }
-    }
-    
-    .errorText {
-      color: $danger-color;
-      font-size: 0.85rem;
-    }
-  }
-  
-  .optionsGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    
-    .optionItem {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      padding: 1rem;
-      border: 1px solid $border-color;
-      border-radius: 4px;
-      background-color: $background-color;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      
-      &:has(input:checked) {
-        border-color: $primary-color;
-        background-color: rgba($primary-color, 0.05);
-      }
-      
-      input {
-        margin-top: 0.25rem;
-      }
-      
-      label {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        cursor: pointer;
-      }
-      
-      .optionName {
-        font-weight: 500;
-      }
-      
-      .optionDetails {
-        font-size: 0.9rem;
-        color: $text-light-color;
-      }
-    }
-  }
-  
-  .formActions {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 2rem;
-    
-    @media (max-width: 576px) {
-      flex-direction: column;
-    }
-    
-    button {
-      padding: 0.9rem 1.5rem;
-      border-radius: 4px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      
-      @media (max-width: 576px) {
-        width: 100%;
-      }
-    }
-    
-    .backButton {
-      background-color: transparent;
-      border: 1px solid $border-color;
-      color: $text-color;
-      
-      &:hover {
-        background-color: $background-color-light;
-      }
-    }
-    
-    .submitButton {
-      background-color: $primary-color;
-      border: none;
-      color: white;
-      
-      &:hover {
-        background-color: darken($primary-color, 10%);
-      }
-      
-      &:disabled {
-        background-color: $border-color;
-        cursor: not-allowed;
-      }
-    }
-  }
-}
-
-/* Order confirmation */
-.orderConfirmation {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 3rem 1rem;
-  max-width: 600px;
-  margin: 0 auto;
-  
-  .confirmationIcon {
-    color: $success-color;
-    margin-bottom: 1.5rem;
-  }
-  
-  h2 {
-    margin-bottom: 0.75rem;
-    color: $text-color;
-    font-size: 1.5rem;
-  }
-  
-  .orderNumber {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-    color: $primary-color;
-  }
-  
-  .confirmationMessage {
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-  
-  p {
-    color: $text-light-color;
-    margin-bottom: 2rem;
-  }
-  
-  .continueButton {
-    padding: 0.9rem 2rem;
-    background-color: $primary-color;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-    
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
+  .fullWidth {
+    grid-column: 1 / -1;
   }
 } 
