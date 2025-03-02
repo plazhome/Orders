@@ -36,7 +36,6 @@ const AppContent: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isAdmin } = useAdmin();
 
   const fetchProducts = useCallback(async () => {
     try {

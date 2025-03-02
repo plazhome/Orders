@@ -39,7 +39,6 @@ export const ProductPage: React.FC<ProductPageProps> = ({ products, onProductsCh
         stock: ''
     });
     const [images, setImages] = useState<File[]>([]);
-    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         if (product) {
