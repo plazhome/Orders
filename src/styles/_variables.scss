@@ -8,6 +8,21 @@ $card-background: #1e1e1e;
 $text-primary: #ffffff;
 $text-secondary: rgba(255, 255, 255, 0.7);
 
+// Extended color palette for enhanced UI
+$accent-color: #00c2cb;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+
+// Semantic color mappings for better readability
+$text-color: $text-primary;
+$text-light-color: $text-secondary;
+$background-color: $background-dark;
+$background-color-light: lighten($background-dark, 5%);
+$card-bg-color: $card-background;
+$border-color: rgba(255, 255, 255, 0.1);
+
 // Spacing
 $spacing-xs: 0.25rem;
 $spacing-sm: 0.5rem;
