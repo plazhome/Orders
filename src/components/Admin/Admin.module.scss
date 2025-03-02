@@ -80,7 +80,7 @@
         font-weight: 500;
 
         &:hover:not(:disabled) {
-            background-color: darken($primary-color, 10%);
+            background-color: darken-custom($primary-color, 10%);
         }
 
         &:disabled {

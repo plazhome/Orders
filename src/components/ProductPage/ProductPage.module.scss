@@ -435,7 +435,7 @@
             color: white;
             
             &:hover {
-                background-color: darken($primary-color, 10%);
+                background-color: darken-custom($primary-color, 10%);
             }
         }
         

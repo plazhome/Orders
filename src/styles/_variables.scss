@@ -2,6 +2,7 @@
 
 // Colors
 $primary-color: #fe2c55;
+$error-color: #dc3545;
 $background-dark: #121212;
 $card-background: #1e1e1e;
 $text-primary: #ffffff;
@@ -41,4 +42,9 @@ $z-index-sticky: 1020;
 $z-index-fixed: 1030;
 $z-index-modal: 1040;
 $z-index-popover: 1050;
-$z-index-tooltip: 1060; 
+$z-index-tooltip: 1060;
+
+// Function to replace deprecated darken()
+@function darken-custom($color, $amount) {
+    @return color.adjust($color, $lightness: -$amount);
+} 
