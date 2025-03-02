@@ -11,6 +11,8 @@
     top: 0;
     z-index: $z-index-sticky;
     box-shadow: $shadow-md;
+    width: 100%;
+    height: auto;
 
     .logo {
         font-size: 1.5rem;
@@ -52,20 +54,36 @@
     }
 
     @media (max-width: $breakpoint-md) {
-        padding: 1rem;
-        flex-direction: column;
-        gap: 1rem;
+        padding: 0.75rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
 
+        .logo {
+            font-size: 1.2rem;
+        }
+
+        .links {
+            width: auto;
+            justify-content: flex-end;
+            gap: 0.25rem;
+
+            a {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.5rem;
+                white-space: nowrap;
+            }
+        }
+    }
+
+    @media (max-width: $breakpoint-sm) {
+        flex-direction: column;
+        padding: 0.5rem;
+        
         .links {
             width: 100%;
             justify-content: space-around;
-            gap: 0.5rem;
-
-            a {
-                font-size: 0.9rem;
-                padding: 0.5rem;
-                text-align: center;
-            }
+            padding-top: 0.5rem;
         }
     }
 } 

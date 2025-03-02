@@ -6,6 +6,7 @@ import { Navigation } from './components/Navigation/Navigation';
 import { Product } from './types/product';
 import { CartProvider } from './context/CartContext';
 import { AdminProvider, useAdmin } from './context/AdminContext';
+import { SettingsProvider } from './context/SettingsContext';
 import { AdminLogin } from './components/Admin/AdminLogin';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
 import { Cart } from './components/Cart/Cart';
@@ -154,14 +155,17 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AdminProvider>
-      <CartProvider>
-        <Router>
-          <AppContent />
-        </Router>
-      </CartProvider>
-    </AdminProvider>
+    <Router>
+      <AdminProvider>
+        <CartProvider>
+          <SettingsProvider>
+            <AppContent />
+          </SettingsProvider>
+        </CartProvider>
+      </AdminProvider>
+    </Router>
   );
 };
 
+export { API_URL };
 export default App;

@@ -1,5 +1,6 @@
 import React, { useState, useContext, FormEvent, useEffect } from 'react';
 import { CartContext, CartItem } from '../../context/CartContext';
+import { useSettings } from '../../context/SettingsContext';
 import styles from './Cart.module.scss';
 
 // Shipping options with pricing
@@ -18,6 +19,7 @@ const PAYMENT_METHODS = [
 
 export const Cart: React.FC = () => {
   const { cartItems, addToCart, removeFromCart, clearCart } = useContext(CartContext);
+  const { settings } = useSettings();
   
   // Form fields
   const [name, setName] = useState('');
@@ -29,8 +31,8 @@ export const Cart: React.FC = () => {
   const [message, setMessage] = useState('');
   
   // Order options
-  const [shippingMethod, setShippingMethod] = useState('standard');
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [shippingMethod, setShippingMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
   
   // UI states
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -38,10 +40,30 @@ export const Cart: React.FC = () => {
   const [orderNumber, setOrderNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Set default shipping and payment methods when settings are loaded
+  useEffect(() => {
+    if (settings) {
+      // Set default shipping method
+      const defaultShipping = settings.shipping.options.find(option => option.isDefault);
+      if (defaultShipping) setShippingMethod(defaultShipping.id);
+      else if (settings.shipping.options.length > 0) setShippingMethod(settings.shipping.options[0].id);
+      
+      // Set default payment method
+      const enabledPaymentMethods = settings.payment.methods.filter(method => method.enabled);
+      const defaultPayment = enabledPaymentMethods.find(method => method.isDefault);
+      if (defaultPayment) setPaymentMethod(defaultPayment.id);
+      else if (enabledPaymentMethods.length > 0) setPaymentMethod(enabledPaymentMethods[0].id);
+    }
+  }, [settings]);
+
   // Calculate order totals
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const selectedShipping = SHIPPING_OPTIONS.find(option => option.id === shippingMethod) || SHIPPING_OPTIONS[0];
-  const shippingCost = selectedShipping.price;
+  
+  // Get selected shipping option
+  const selectedShipping = settings.shipping.options.find(option => option.id === shippingMethod) || 
+    (settings.shipping.options.length > 0 ? settings.shipping.options[0] : { id: '', name: '', price: 0, days: '' });
+  
+  const shippingCost = selectedShipping?.price || 0;
   const totalPrice = subtotal + shippingCost;
 
   // Generate order number
@@ -82,6 +104,12 @@ export const Cart: React.FC = () => {
     if (!phone.trim()) errors.phone = 'Phone is required';
     else if (!/^\d{10,}$/.test(phone.replace(/[^0-9]/g, ''))) errors.phone = 'Please enter a valid phone number';
     
+    // Check if shipping method is selected
+    if (!shippingMethod) errors.shippingMethod = 'Please select a shipping method';
+    
+    // Check if payment method is selected
+    if (!paymentMethod) errors.paymentMethod = 'Please select a payment method';
+    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -97,6 +125,9 @@ export const Cart: React.FC = () => {
     setIsSubmitting(true);
     
     try {
+      // Find selected payment method
+      const selectedPaymentMethod = settings.payment.methods.find(method => method.id === paymentMethod);
+      
       // Construct order details
       let orderDetails = `Order Details:%0D%0A%0D%0A`;
       cartItems.forEach((item: CartItem) => {
@@ -107,7 +138,7 @@ export const Cart: React.FC = () => {
       orderDetails += `Shipping (${selectedShipping.name}): €${shippingCost.toFixed(2)}%0D%0A`;
       orderDetails += `Total: €${totalPrice.toFixed(2)}%0D%0A%0D%0A`;
       
-      orderDetails += `Payment Method: ${PAYMENT_METHODS.find(method => method.id === paymentMethod)?.name}%0D%0A%0D%0A`;
+      orderDetails += `Payment Method: ${selectedPaymentMethod?.name || 'Not specified'}%0D%0A%0D%0A`;
       
       orderDetails += `Customer Details:%0D%0A`;
       orderDetails += `Name: ${name}%0D%0A`;
@@ -149,8 +180,8 @@ export const Cart: React.FC = () => {
     setPostalCode('');
     setPhone('');
     setMessage('');
-    setShippingMethod('standard');
-    setPaymentMethod('card');
+    setShippingMethod(settings.shipping.options.find(option => option.isDefault)?.id || '');
+    setPaymentMethod(settings.payment.methods.find(method => method.isDefault && method.enabled)?.id || '');
     setOrderStep('cart');
     setOrderNumber('');
     window.location.href = '/'; // Navigate to home page
@@ -322,8 +353,11 @@ export const Cart: React.FC = () => {
       
       <div className={styles.formSection}>
         <h2>Shipping Method</h2>
+        {formErrors.shippingMethod && (
+          <span className={styles.errorText}>{formErrors.shippingMethod}</span>
+        )}
         <div className={styles.optionsGroup}>
-          {SHIPPING_OPTIONS.map(option => (
+          {settings.shipping.options.map(option => (
             <div className={styles.optionItem} key={option.id}>
               <input
                 type="radio"
@@ -346,22 +380,27 @@ export const Cart: React.FC = () => {
       
       <div className={styles.formSection}>
         <h2>Payment Method</h2>
+        {formErrors.paymentMethod && (
+          <span className={styles.errorText}>{formErrors.paymentMethod}</span>
+        )}
         <div className={styles.optionsGroup}>
-          {PAYMENT_METHODS.map(method => (
-            <div className={styles.optionItem} key={method.id}>
-              <input
-                type="radio"
-                id={`payment-${method.id}`}
-                name="payment"
-                value={method.id}
-                checked={paymentMethod === method.id}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-              <label htmlFor={`payment-${method.id}`}>
-                <span className={styles.optionName}>{method.name}</span>
-              </label>
-            </div>
-          ))}
+          {settings.payment.methods
+            .filter(method => method.enabled)
+            .map(method => (
+              <div className={styles.optionItem} key={method.id}>
+                <input
+                  type="radio"
+                  id={`payment-${method.id}`}
+                  name="payment"
+                  value={method.id}
+                  checked={paymentMethod === method.id}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <label htmlFor={`payment-${method.id}`}>
+                  <span className={styles.optionName}>{method.name}</span>
+                </label>
+              </div>
+            ))}
         </div>
       </div>
       

@@ -97,74 +97,162 @@
 }
 
 .adminDashboard {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 2rem;
-
+    
     @media (max-width: $breakpoint-md) {
         padding: 1rem;
     }
+}
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid rgba($text-secondary, 0.2);
+.tabContainer {
+    margin-bottom: 2rem;
+}
 
-        h1 {
-            margin: 0;
-            color: $text-primary;
-        }
+.tabs {
+    display: flex;
+    border-bottom: 1px solid $border-color;
+    margin-bottom: 2rem;
+    
+    @media (max-width: $breakpoint-md) {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
 
-        .logoutButton {
-            padding: 0.5rem 1rem;
-            background-color: transparent;
-            border: 1px solid $primary-color;
-            color: $primary-color;
-            border-radius: $border-radius;
-            cursor: pointer;
-            transition: all 0.2s ease;
+.tabButton {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: $text-secondary;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all $transition-fast;
+    
+    &:hover {
+        color: $text-primary;
+    }
+    
+    &.activeTab {
+        color: $primary-color;
+        border-bottom-color: $primary-color;
+    }
+    
+    @media (max-width: $breakpoint-md) {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        flex: 1 0 auto;
+        text-align: center;
+    }
+}
 
-            &:hover {
-                background-color: $primary-color;
-                color: white;
-            }
+.tabContent {
+    background-color: $card-background;
+    border-radius: $border-radius;
+    padding: 2rem;
+    
+    @media (max-width: $breakpoint-md) {
+        padding: 1rem;
+    }
+}
+
+.formSection {
+    margin-bottom: 2rem;
+    
+    &:last-child {
+        margin-bottom: 0;
+    }
+    
+    h2 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        color: $primary-color;
+    }
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    
+    input, textarea, select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid $border-color;
+        background-color: darken($card-background, 3%);
+        color: $text-primary;
+        border-radius: 4px;
+        
+        &:focus {
+            outline: none;
+            border-color: $primary-color;
         }
     }
+    
+    textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    .error {
+        color: $error-color;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+}
 
-    .tabContainer {
-        margin-bottom: 2rem;
-
-        .tabs {
-            display: flex;
-            gap: 1rem;
-            border-bottom: 1px solid rgba($text-secondary, 0.2);
-            
-            @media (max-width: $breakpoint-md) {
-                flex-direction: column;
-                gap: 0.5rem;
-                border-bottom: none;
-            }
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    
+    h1 {
+        margin: 0;
+        font-size: 2rem;
+        color: $text-primary;
+    }
+    
+    .logoutButton {
+        padding: 0.5rem 1rem;
+        background-color: transparent;
+        border: 1px solid $border-color;
+        color: $text-primary;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all $transition-fast;
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
+    }
+}
 
-        .tabButton {
-            padding: 1rem 2rem;
+.settingsManager {
+    h2 {
+        margin-bottom: 1.5rem;
+        color: $primary-color;
+    }
+    
+    .settingsTabs {
+        display: flex;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid $border-color;
+        
+        button {
+            padding: 0.75rem 1.5rem;
             background: none;
             border: none;
-            border-bottom: 3px solid transparent;
             color: $text-secondary;
-            font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            
-            @media (max-width: $breakpoint-md) {
-                padding: 0.75rem 1rem;
-                background-color: $card-background;
-                border-radius: $border-radius;
-                border: 1px solid transparent;
-                text-align: center;
-            }
+            border-bottom: 2px solid transparent;
+            transition: all $transition-fast;
             
             &:hover {
                 color: $text-primary;
@@ -173,16 +261,218 @@
             &.activeTab {
                 color: $primary-color;
                 border-bottom-color: $primary-color;
+            }
+        }
+    }
+    
+    .optionsList {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .optionItem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-radius: $border-radius-sm;
+        background-color: darken($card-background, 3%);
+        border: 1px solid $border-color;
+        
+        &.disabled {
+            opacity: 0.7;
+        }
+        
+        .optionDetails {
+            h3 {
+                margin: 0 0 0.5rem 0;
+                font-size: 1.1rem;
+            }
+            
+            .optionMeta {
+                display: flex;
+                gap: 1rem;
+                font-size: 0.9rem;
+                color: $text-secondary;
+            }
+            
+            .defaultBadge {
+                color: $primary-color;
+                font-weight: 500;
+            }
+            
+            .enabledStatus {
+                color: $success-color;
+            }
+            
+            .disabledStatus {
+                color: $text-secondary;
+            }
+        }
+        
+        .optionActions {
+            display: flex;
+            gap: 0.5rem;
+            
+            button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all $transition-fast;
                 
-                @media (max-width: $breakpoint-md) {
-                    background-color: rgba($primary-color, 0.1);
-                    border-color: $primary-color;
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+            }
+            
+            .setDefaultButton {
+                background-color: transparent;
+                border: 1px solid $border-color;
+                color: $text-primary;
+                
+                &:hover:not(:disabled) {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+            }
+            
+            .editButton {
+                background-color: transparent;
+                border: 1px solid $info-color;
+                color: $info-color;
+                
+                &:hover {
+                    background-color: rgba($info-color, 0.1);
+                }
+            }
+            
+            .deleteButton {
+                background-color: transparent;
+                border: 1px solid $danger-color;
+                color: $danger-color;
+                
+                &:hover:not(:disabled) {
+                    background-color: rgba($danger-color, 0.1);
+                }
+            }
+            
+            .enableButton {
+                background-color: transparent;
+                border: 1px solid $success-color;
+                color: $success-color;
+                
+                &:hover {
+                    background-color: rgba($success-color, 0.1);
+                }
+            }
+            
+            .disableButton {
+                background-color: transparent;
+                border: 1px solid $text-secondary;
+                color: $text-secondary;
+                
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+            }
+            
+            @media (max-width: $breakpoint-md) {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: $breakpoint-md) {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+            
+            .optionActions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                
+                button {
+                    width: 100%;
+                    text-align: center;
                 }
             }
         }
     }
-
-    .tabContent {
-        min-height: 500px;
+    
+    .addOptionForm {
+        background-color: darken($card-background, 3%);
+        border-radius: $border-radius-sm;
+        padding: 1.5rem;
+        border: 1px solid $border-color;
+        
+        h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            color: $text-primary;
+        }
+        
+        .formGroup {
+            margin-bottom: 1rem;
+        }
+        
+        .formActions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            
+            button {
+                padding: 0.75rem 1.5rem;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all $transition-fast;
+            }
+            
+            .cancelButton {
+                background-color: transparent;
+                border: 1px solid $border-color;
+                color: $text-primary;
+                
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+            }
+            
+            .submitButton {
+                background-color: $primary-color;
+                border: none;
+                color: white;
+                
+                &:hover {
+                    background-color: darken($primary-color, 10%);
+                }
+            }
+        }
+    }
+    
+    .paymentNote {
+        margin-top: 2rem;
+        padding: 1rem;
+        border-radius: $border-radius-sm;
+        background-color: rgba($primary-color, 0.1);
+        border-left: 3px solid $primary-color;
+        
+        p {
+            margin: 0.5rem 0;
+            color: $text-secondary;
+            font-size: 0.9rem;
+            
+            &:first-child {
+                margin-top: 0;
+            }
+            
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
     }
 } 

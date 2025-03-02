@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { AddProduct } from '../AddProduct/AddProduct';
 import { ProductDashboard } from './ProductDashboard';
+import { SettingsManager } from './SettingsManager';
 import styles from './Admin.module.scss';
 
 interface AdminDashboardProps {
@@ -12,7 +13,7 @@ interface AdminDashboardProps {
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onProductsChange }) => {
     const { logout } = useAdmin();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<'manage' | 'add'>('manage');
+    const [activeTab, setActiveTab] = useState<'manage' | 'add' | 'settings'>('manage');
 
     const handleLogout = () => {
         logout();
@@ -42,14 +43,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onProductsChange
                     >
                         Add New Product
                     </button>
+                    <button 
+                        className={`${styles.tabButton} ${activeTab === 'settings' ? styles.activeTab : ''}`}
+                        onClick={() => setActiveTab('settings')}
+                    >
+                        Store Settings
+                    </button>
                 </div>
             </div>
             
             <div className={styles.tabContent}>
-                {activeTab === 'add' ? (
+                {activeTab === 'add' && (
                     <AddProduct onProductAdded={onProductsChange} />
-                ) : (
+                )}
+                {activeTab === 'manage' && (
                     <ProductDashboard onProductsChange={onProductsChange} />
+                )}
+                {activeTab === 'settings' && (
+                    <SettingsManager />
                 )}
             </div>
         </div>
