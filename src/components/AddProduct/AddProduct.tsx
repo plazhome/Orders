@@ -4,7 +4,7 @@ import { Product } from '../../types/product';
 import styles from './AddProduct.module.scss';
 
 const API_URL = import.meta.env.PROD 
-  ? 'https://orders-app-431y.onrender.com/api'
+  ? 'https://tiktok-shop-backend.onrender.com/api'
   : 'http://localhost:3001/api';
 
 interface AddProductProps {

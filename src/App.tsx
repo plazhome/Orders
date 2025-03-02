@@ -13,7 +13,7 @@ import './App.scss';
 
 // API URL based on environment
 const API_URL = import.meta.env.PROD 
-  ? 'https://orders-app-431y.onrender.com/api'
+  ? 'https://tiktok-shop-backend.onrender.com/api'
   : 'http://localhost:3001/api';
 
 // Protected route component
@@ -38,15 +38,29 @@ const AppContent: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchProducts = useCallback(async () => {
+    setLoading(true);
     try {
+      console.log('Fetching products from:', `${API_URL}/products`);
       const response = await fetch(`${API_URL}/products`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
+      
+      // Log the raw response
+      const rawResponse = await response.text();
+      console.log('Raw products response:', rawResponse);
+      
+      // Try to parse the response as JSON
+      let products;
+      try {
+        products = JSON.parse(rawResponse);
+      } catch (parseError) {
+        console.error('Error parsing products response:', parseError);
+        throw new Error('Invalid JSON response from API');
       }
-      const data = await response.json();
-      setProducts(data);
+      
+      setProducts(products);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setLoading(false);
       setError('Failed to fetch products. Please try again later.');
     }
   }, []);
@@ -54,12 +68,20 @@ const AppContent: React.FC = () => {
   // Check API health and fetch products
   const checkAPI = async () => {
     try {
-      // First try the health endpoint
-      const response = await fetch(`${API_URL}/health`);
-      if (!response.ok) {
-        // Fall back to the root API endpoint if health endpoint fails
-        const rootResponse = await fetch(`${API_URL}`);
-        if (!rootResponse.ok) {
+      console.log('Checking API at:', `${API_URL}/debug`);
+      // First try the debug endpoint
+      const debugResponse = await fetch(`${API_URL}/debug`);
+      const debugData = await debugResponse.text(); // Use text() instead of json() to see the raw response
+      console.log('Debug endpoint response:', debugData);
+      
+      if (!debugResponse.ok) {
+        // Fall back to the health endpoint if debug endpoint fails
+        console.log('Checking health endpoint at:', `${API_URL}/health`);
+        const response = await fetch(`${API_URL}/health`);
+        const healthData = await response.text(); // Use text() instead of json() to see the raw response
+        console.log('Health endpoint response:', healthData);
+        
+        if (!response.ok) {
           throw new Error('API health check failed');
         }
       }

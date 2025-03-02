@@ -141,7 +141,9 @@ connectDB();
 
 // Middleware
 app.use(cors({
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production' 
+        ? ['https://tiktok-shop-frontend.onrender.com', 'https://orders-app-431y.onrender.com']
+        : ['http://localhost:5173', 'http://localhost:3000'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
@@ -290,6 +292,15 @@ app.get('/api/products/:id', async (req, res) => {
         console.error('Error fetching product:', error);
         res.status(500).json({ error: 'Failed to fetch product' });
     }
+});
+
+// Debug endpoint
+app.get('/api/debug', (req, res) => {
+    res.json({ 
+        status: 'ok',
+        message: 'Debug endpoint is working',
+        timestamp: new Date().toISOString()
+    });
 });
 
 // Start server
