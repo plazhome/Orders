@@ -99,6 +99,10 @@
 .adminDashboard {
     padding: 2rem;
 
+    @media (max-width: $breakpoint-md) {
+        padding: 1rem;
+    }
+
     .header {
         display: flex;
         justify-content: space-between;
@@ -126,5 +130,59 @@
                 color: white;
             }
         }
+    }
+
+    .tabContainer {
+        margin-bottom: 2rem;
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid rgba($text-secondary, 0.2);
+            
+            @media (max-width: $breakpoint-md) {
+                flex-direction: column;
+                gap: 0.5rem;
+                border-bottom: none;
+            }
+        }
+
+        .tabButton {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: $text-secondary;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            @media (max-width: $breakpoint-md) {
+                padding: 0.75rem 1rem;
+                background-color: $card-background;
+                border-radius: $border-radius;
+                border: 1px solid transparent;
+                text-align: center;
+            }
+            
+            &:hover {
+                color: $text-primary;
+            }
+            
+            &.activeTab {
+                color: $primary-color;
+                border-bottom-color: $primary-color;
+                
+                @media (max-width: $breakpoint-md) {
+                    background-color: rgba($primary-color, 0.1);
+                    border-color: $primary-color;
+                }
+            }
+        }
+    }
+
+    .tabContent {
+        min-height: 500px;
     }
 } 

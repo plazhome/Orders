@@ -1,0 +1,324 @@
+@use '../../styles/variables' as *;
+
+.productDashboard {
+    padding: 2rem;
+    background-color: $background-dark;
+    color: $text-primary;
+    width: 100%;
+    min-height: 100vh;
+
+    @media (max-width: $breakpoint-md) {
+        padding: 1rem;
+    }
+}
+
+.dashboardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h1 {
+        margin: 0;
+        color: $text-primary;
+        font-size: 1.8rem;
+
+        @media (max-width: $breakpoint-md) {
+            font-size: 1.5rem;
+        }
+    }
+
+    .actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        @media (max-width: $breakpoint-md) {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 0.75rem 1rem;
+            border-radius: $border-radius;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            border: none;
+            
+            &.addButton {
+                background-color: $primary-color;
+                color: white;
+                
+                &:hover {
+                    background-color: darken-custom($primary-color, 10%);
+                }
+            }
+            
+            &.deleteButton {
+                background-color: rgba($error-color, 0.1);
+                color: $error-color;
+                border: 1px solid $error-color;
+                
+                &:hover {
+                    background-color: $error-color;
+                    color: white;
+                }
+            }
+        }
+    }
+}
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    @media (max-width: $breakpoint-md) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search {
+        flex: 1;
+        max-width: 400px;
+
+        @media (max-width: $breakpoint-md) {
+            max-width: none;
+            width: 100%;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: $border-radius;
+            background-color: rgba($text-primary, 0.1);
+            border: 1px solid rgba($text-primary, 0.2);
+            color: $text-primary;
+            font-size: 1rem;
+
+            &:focus {
+                border-color: $primary-color;
+                outline: none;
+            }
+        }
+    }
+
+    .productStats {
+        display: flex;
+        gap: 1rem;
+        color: $text-secondary;
+        font-size: 0.9rem;
+
+        @media (max-width: $breakpoint-md) {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+}
+
+.error {
+    background-color: rgba($error-color, 0.1);
+    border: 1px solid $error-color;
+    color: $error-color;
+    padding: 1rem;
+    border-radius: $border-radius;
+    margin-bottom: 1.5rem;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+    
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba($primary-color, 0.3);
+        border-radius: 50%;
+        border-top-color: $primary-color;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+}
+
+.noProducts {
+    background-color: $card-background;
+    padding: 2rem;
+    text-align: center;
+    border-radius: $border-radius;
+    color: $text-secondary;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    border-radius: $border-radius;
+    box-shadow: $shadow-md;
+}
+
+.productTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: $card-background;
+    
+    th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba($text-primary, 0.1);
+        
+        @media (max-width: $breakpoint-md) {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+    
+    th {
+        background-color: rgba($background-dark, 0.5);
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    
+    tr:hover td {
+        background-color: rgba($text-primary, 0.05);
+    }
+
+    .sortableHeader {
+        cursor: pointer;
+        user-select: none;
+        
+        &:hover {
+            background-color: rgba($text-primary, 0.1);
+        }
+    }
+    
+    .checkboxCell {
+        width: 40px;
+        text-align: center;
+    }
+    
+    .imageCell {
+        width: 80px;
+    }
+    
+    .priceCell, .stockCell {
+        width: 100px;
+        text-align: right;
+    }
+    
+    .actionsCell {
+        width: 150px;
+        text-align: right;
+        white-space: nowrap;
+    }
+    
+    .checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+    
+    .productThumbnail {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: $border-radius-sm;
+        
+        @media (max-width: $breakpoint-md) {
+            width: 50px;
+            height: 50px;
+        }
+    }
+    
+    .editButton, .deleteButton {
+        padding: 0.5rem 0.75rem;
+        border-radius: $border-radius-sm;
+        font-size: 0.9rem;
+        border: none;
+        margin-left: 0.5rem;
+        
+        @media (max-width: $breakpoint-md) {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+        }
+    }
+    
+    .editButton {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+        
+        &:hover {
+            background-color: $primary-color;
+            color: white;
+        }
+    }
+    
+    .deleteButton {
+        background-color: rgba($error-color, 0.1);
+        color: $error-color;
+        
+        &:hover {
+            background-color: $error-color;
+            color: white;
+        }
+    }
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    
+    button {
+        min-width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: $card-background;
+        border: none;
+        border-radius: $border-radius-sm;
+        color: $text-primary;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover:not(:disabled) {
+            background-color: rgba($primary-color, 0.2);
+        }
+        
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        &.activePage {
+            background-color: $primary-color;
+            color: white;
+        }
+        
+        &.paginationArrow {
+            font-weight: bold;
+        }
+    }
+    
+    span {
+        color: $text-secondary;
+        padding: 0 0.5rem;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+} 
