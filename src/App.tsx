@@ -55,9 +55,14 @@ const AppContent: React.FC = () => {
   // Check API health and fetch products
   const checkAPI = async () => {
     try {
+      // First try the health endpoint
       const response = await fetch(`${API_URL}/health`);
       if (!response.ok) {
-        throw new Error('API health check failed');
+        // Fall back to the root API endpoint if health endpoint fails
+        const rootResponse = await fetch(`${API_URL}`);
+        if (!rootResponse.ok) {
+          throw new Error('API health check failed');
+        }
       }
       await fetchProducts();
       setLoading(false);

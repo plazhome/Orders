@@ -162,6 +162,17 @@ app.get('/api', (req, res) => {
     res.json({ status: 'API is running' });
 });
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    res.json({ 
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        database: dbStatus,
+        environment: process.env.NODE_ENV || 'development'
+    });
+});
+
 // Check MongoDB connection middleware
 const checkDBConnection = (req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (mongoose.connection.readyState !== 1) {
