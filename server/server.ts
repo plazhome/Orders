@@ -34,8 +34,6 @@ const sampleProduct = {
 
 // MongoDB connection options
 const mongooseOptions = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 30000,
     socketTimeoutMS: 45000,
     family: 4,
@@ -48,6 +46,12 @@ const mongooseOptions = {
 // MongoDB connection function
 const connectDB = async () => {
     try {
+        // Check if already connecting or connected
+        if (mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) {
+            console.log('MongoDB already connected or connecting');
+            return;
+        }
+
         console.log('Attempting to connect to MongoDB...');
         const conn = await mongoose.connect(process.env.MONGODB_URI as string, mongooseOptions);
         console.log('MongoDB Connected Successfully');
@@ -64,21 +68,22 @@ const connectDB = async () => {
             console.log('No products found, adding sample product...');
             await Product.create(sampleProduct);
             console.log('Sample product added successfully');
+            
+            // Create backup after adding sample product
+            console.log('Creating initial backup...');
+            await backupProducts();
+            console.log('Initial backup created successfully');
         }
-
-        // Create automatic backup
-        console.log('Creating automatic backup...');
-        await backupProducts();
-        console.log('Automatic backup created successfully');
 
         // Schedule daily backups at midnight
         setInterval(async () => {
             const now = new Date();
             if (now.getHours() === 0 && now.getMinutes() === 0) {
+                console.log('Creating scheduled daily backup...');
                 await backupProducts();
-                console.log('Daily backup created');
+                console.log('Daily backup created successfully');
             }
-        }, 60000); // Check every minute
+        }, 3600000); // Check every hour instead of every minute
 
     } catch (error) {
         console.error('MongoDB connection error details:', {
@@ -86,9 +91,9 @@ const connectDB = async () => {
             stack: error instanceof Error ? error.stack : undefined,
             timestamp: new Date().toISOString()
         });
-        // Retry connection after 10 seconds
-        console.log('Retrying connection in 10 seconds...');
-        setTimeout(connectDB, 10000);
+        // Retry connection after 30 seconds
+        console.log('Retrying connection in 30 seconds...');
+        setTimeout(connectDB, 30000);
     }
 };
 
@@ -101,16 +106,34 @@ mongoose.connection.on('error', err => {
     });
 });
 
+let reconnectTimeout: NodeJS.Timeout | null = null;
+
 mongoose.connection.on('disconnected', () => {
     console.log('MongoDB disconnected event triggered');
     console.log('Current connection state:', mongoose.connection.readyState);
-    console.log('Attempting to reconnect...');
-    connectDB();
+    
+    // Clear any existing reconnection timeout
+    if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+    }
+    
+    // Set a new reconnection timeout
+    console.log('Attempting to reconnect in 5 seconds...');
+    reconnectTimeout = setTimeout(() => {
+        console.log('Attempting to reconnect...');
+        connectDB();
+    }, 5000);
 });
 
 mongoose.connection.on('connected', () => {
     console.log('MongoDB connected event triggered');
     console.log('Connection state:', mongoose.connection.readyState);
+    
+    // Clear any existing reconnection timeout
+    if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = null;
+    }
 });
 
 // Connect to MongoDB

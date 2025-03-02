@@ -29,14 +29,6 @@ export const Navigation: React.FC = () => {
                         Dashboard
                     </Link>
                 )}
-                {!isAdmin && (
-                    <Link 
-                        to="/admin"
-                        className={location.pathname === '/admin' ? styles.active : ''}
-                    >
-                        Admin
-                    </Link>
-                )}
                 <Link 
                     to="/cart"
                     className={location.pathname === '/cart' ? styles.active : ''}

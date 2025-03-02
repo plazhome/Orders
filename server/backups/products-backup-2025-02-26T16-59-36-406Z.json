@@ -1,0 +1,49 @@
+[
+  {
+    "seller": {
+      "id": "test-seller",
+      "name": "Test Seller",
+      "avatar": "https://res.cloudinary.com/dxsebqku9/image/upload/v1/tiktok-shop/default-avatar.jpg"
+    },
+    "title": "Test Product",
+    "description": "This is a test product to ensure the system is working correctly",
+    "price": 29.99,
+    "images": [
+      "https://res.cloudinary.com/dxsebqku9/image/upload/v1/tiktok-shop/placeholder.jpg"
+    ],
+    "category": "Test",
+    "tags": [
+      "test",
+      "sample"
+    ],
+    "stock": 10,
+    "rating": 5,
+    "reviews": [],
+    "createdAt": "2025-02-26T13:00:08.693Z",
+    "id": "67bf105868b3d7f68171777f"
+  },
+  {
+    "seller": {
+      "id": "current-user-id",
+      "name": "Current User",
+      "avatar": "/images/default-avatar.jpg"
+    },
+    "title": "Swirl",
+    "description": "Ένα ιδιαίτερο πιάτο που μαγνητίζει τα βλέμματα χάρη στα ανάγλυφα σπειροειδή μοτίβα του. Οι διακριτικές χρυσές πινελιές τού χαρίζουν κομψότητα, μετατρέποντάς το σε κεντρικό κομμάτι για κάθε τραπέζι—είτε σε καθημερινά γεύματα είτε σε πιο επίσημες περιστάσεις.\n\n",
+    "price": 1.5,
+    "images": [
+      "https://res.cloudinary.com/dxsebqku9/image/upload/v1740575167/tiktok-shop/hspyzdsalpucjnayxp1c.jpg"
+    ],
+    "category": "Βαθιά πιάτα",
+    "tags": [
+      "bowl",
+      "ceramic",
+      "dish"
+    ],
+    "stock": 15,
+    "rating": 0,
+    "reviews": [],
+    "createdAt": "2025-02-26T13:06:08.086Z",
+    "id": "67bf11c0df7205dce1cc2bb0"
+  }
+]

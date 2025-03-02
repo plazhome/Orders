@@ -25,7 +25,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onProductsChange
                     Logout
                 </button>
             </div>
-            <AddProduct onProductAdded={onProductsChange} />
+            <AddProduct onProductAdded={() => onProductsChange()} />
         </div>
     );
 }; 

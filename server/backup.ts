@@ -13,10 +13,35 @@ if (!fs.existsSync(backupDir)) {
     fs.mkdirSync(backupDir, { recursive: true });
 }
 
-export const backupProducts = async () => {
+// Clean up old backups (keep only last 7 days)
+const cleanupOldBackups = () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI as string);
-        console.log('Connected to MongoDB');
+        const files = fs.readdirSync(backupDir);
+        const now = Date.now();
+        const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
+
+        files.forEach(file => {
+            const filePath = path.join(backupDir, file);
+            const stats = fs.statSync(filePath);
+            if (stats.birthtime.getTime() < sevenDaysAgo) {
+                fs.unlinkSync(filePath);
+                console.log(`Deleted old backup: ${file}`);
+            }
+        });
+    } catch (error) {
+        console.error('Error cleaning up old backups:', error);
+    }
+};
+
+export const backupProducts = async () => {
+    // Don't create a new connection if we're already connected
+    const wasConnected = mongoose.connection.readyState === 1;
+    
+    try {
+        if (!wasConnected) {
+            await mongoose.connect(process.env.MONGODB_URI as string);
+            console.log('Connected to MongoDB');
+        }
 
         const products = await Product.find();
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -25,17 +50,31 @@ export const backupProducts = async () => {
         fs.writeFileSync(backupPath, JSON.stringify(products, null, 2));
         console.log(`Backup created at: ${backupPath}`);
 
-        await mongoose.disconnect();
+        // Clean up old backups
+        cleanupOldBackups();
+
+        if (!wasConnected) {
+            await mongoose.disconnect();
+        }
+        
+        return true;
     } catch (error) {
         console.error('Backup failed:', error);
-        process.exit(1);
+        if (!wasConnected && mongoose.connection.readyState === 1) {
+            await mongoose.disconnect();
+        }
+        return false;
     }
 };
 
 export const restoreProducts = async (backupFile: string) => {
+    const wasConnected = mongoose.connection.readyState === 1;
+    
     try {
-        await mongoose.connect(process.env.MONGODB_URI as string);
-        console.log('Connected to MongoDB');
+        if (!wasConnected) {
+            await mongoose.connect(process.env.MONGODB_URI as string);
+            console.log('Connected to MongoDB');
+        }
 
         const backupPath = path.join(backupDir, backupFile);
         const products = JSON.parse(fs.readFileSync(backupPath, 'utf-8'));
@@ -49,10 +88,17 @@ export const restoreProducts = async (backupFile: string) => {
             console.log('Database not empty, skipping restore');
         }
 
-        await mongoose.disconnect();
+        if (!wasConnected) {
+            await mongoose.disconnect();
+        }
+        
+        return true;
     } catch (error) {
         console.error('Restore failed:', error);
-        process.exit(1);
+        if (!wasConnected && mongoose.connection.readyState === 1) {
+            await mongoose.disconnect();
+        }
+        return false;
     }
 };
 
