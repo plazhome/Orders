@@ -403,59 +403,93 @@
 .adminControls {
     display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: rgba($background-dark, 0.95);
+    backdrop-filter: blur(8px);
+    
+    @media (max-width: $breakpoint-md) {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        right: 0;
+        justify-content: center;
+        border-top: 1px solid rgba($text-primary, 0.1);
+    }
 
     button {
-        padding: 0.5rem 1rem;
-        border: none;
+        padding: 0.75rem 1.5rem;
         border-radius: $border-radius;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all $transition-fast;
-
-        &:first-child {
+        font-weight: 600;
+        transition: all 0.2s ease;
+        flex: 0 1 auto;
+        min-width: 120px;
+        max-width: 200px;
+        white-space: nowrap;
+        
+        &:not(.deleteButton) {
             background-color: $primary-color;
             color: white;
-
+            
             &:hover {
-                background-color: color.adjust($primary-color, $lightness: -10%);
+                background-color: darken($primary-color, 10%);
+            }
+        }
+        
+        &.deleteButton {
+            background-color: rgba($error-color, 0.1);
+            color: $error-color;
+            border: 1px solid $error-color;
+            
+            &:hover {
+                background-color: $error-color;
+                color: white;
             }
         }
 
-        &.deleteButton {
-            background-color: #dc3545;
-            color: white;
-
-            &:hover {
-                background-color: color.adjust(#dc3545, $lightness: -10%);
-            }
+        @media (max-width: $breakpoint-md) {
+            padding: 0.5rem 1rem;
+            min-width: auto;
+            flex: 1;
+            font-size: 0.9rem;
         }
     }
 }
 
 .editForm {
-    background-color: rgba($background-dark, 0.5);
-    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    background-color: $card-background;
     border-radius: $border-radius;
-    margin-bottom: 2rem;
+    margin-top: 1rem;
+
+    @media (max-width: $breakpoint-md) {
+        padding: 1rem;
+        margin-bottom: 4rem; // Add space for fixed admin controls
+    }
 
     .formGroup {
-        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
 
         label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: $text-secondary;
+            font-weight: 600;
+            color: $text-primary;
         }
 
-        input,
-        textarea {
-            width: 100%;
+        input, textarea {
             padding: 0.75rem;
-            background-color: $background-dark;
-            border: 1px solid rgba($text-secondary, 0.2);
-            border-radius: $border-radius-sm;
+            border-radius: $border-radius;
+            background-color: rgba($text-primary, 0.1);
+            border: 1px solid rgba($text-primary, 0.2);
             color: $text-primary;
+            font-size: 1rem;
 
             &:focus {
                 border-color: $primary-color;
@@ -464,24 +498,8 @@
         }
 
         textarea {
-            min-height: 100px;
+            min-height: 150px;
             resize: vertical;
-        }
-    }
-
-    .submitButton {
-        width: 100%;
-        padding: 1rem;
-        background-color: $primary-color;
-        color: white;
-        border: none;
-        border-radius: $border-radius;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all $transition-fast;
-
-        &:hover {
-            background-color: color.adjust($primary-color, $lightness: -10%);
         }
     }
 } 
