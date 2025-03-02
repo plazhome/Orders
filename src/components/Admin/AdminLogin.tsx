@@ -4,7 +4,7 @@ import { useAdmin } from '../../context/AdminContext';
 import styles from './Admin.module.scss';
 
 const API_URL = import.meta.env.PROD 
-  ? 'https://orders-app-431y.onrender.com/api'
+  ? 'https://orders-app-431y.onrender.com:10000/api'
   : 'http://localhost:3001/api';
 
 export const AdminLogin: React.FC = () => {

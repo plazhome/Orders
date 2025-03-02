@@ -141,9 +141,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://orders-app-431y.onrender.com', 'https://tiktok-shop-frontend.onrender.com']
-        : ['http://localhost:5173', 'http://localhost:3000'],
+    origin: '*',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
