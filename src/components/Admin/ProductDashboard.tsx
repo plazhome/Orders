@@ -331,6 +331,9 @@ export const ProductDashboard: React.FC<ProductDashboardProps> = ({ onProductsCh
                 </div>
             ) : (
                 <>
+                    <div className={styles.mobileScrollHint}>
+                        <span>Swipe to see more →</span>
+                    </div>
                     <div className={styles.tableContainer}>
                         <table className={styles.productTable}>
                             <thead>

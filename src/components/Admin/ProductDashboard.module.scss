@@ -193,11 +193,58 @@
     color: $text-secondary;
 }
 
+.mobileScrollHint {
+    display: none;
+    margin-bottom: 0.5rem;
+    text-align: right;
+    font-size: 0.8rem;
+    color: $text-secondary;
+    opacity: 0.8;
+    animation: fadeInOut 2s infinite;
+    
+    @media (max-width: $breakpoint-md) {
+        display: block;
+    }
+    
+    span {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        background-color: rgba($card-background, 0.7);
+        border-radius: $border-radius-sm;
+    }
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
 .tableContainer {
     overflow-x: auto;
     margin-bottom: 1.5rem;
     border-radius: $border-radius;
     box-shadow: $shadow-md;
+    -webkit-overflow-scrolling: touch; /* Improves scroll on iOS */
+    scrollbar-width: thin; /* For Firefox */
+    
+    /* Better visible scrolling indicator on mobile */
+    @media (max-width: $breakpoint-md) {
+        position: relative;
+        
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 20px;
+            background: linear-gradient(to right, transparent, rgba($background-dark, 0.8));
+            pointer-events: none;
+            opacity: 0.7;
+            z-index: 1;
+        }
+    }
 }
 
 .productTable {
@@ -206,10 +253,19 @@
     margin-bottom: 2rem;
     min-width: 800px; // Ensures table is scrollable on small screens
     
+    @media (max-width: $breakpoint-md) {
+        margin-bottom: 1rem;
+    }
+    
     th, td {
         padding: 0.75rem;
         border-bottom: 1px solid $border-color;
         text-align: left;
+        
+        @media (max-width: $breakpoint-md) {
+            padding: 0.5rem 0.4rem;
+            font-size: 0.9rem;
+        }
     }
     
     th {
@@ -220,6 +276,15 @@
     
     td {
         vertical-align: middle;
+        
+        @media (max-width: $breakpoint-md) {
+            &:not(.imageCell):not(.checkboxCell) {
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
     }
     
     tbody tr {
@@ -257,12 +322,23 @@
     .priceCell, .stockCell {
         width: 100px;
         text-align: right;
+        
+        @media (max-width: $breakpoint-md) {
+            width: auto;
+            min-width: 70px;
+        }
     }
     
     .actionsCell {
         width: 150px;
         text-align: right;
         white-space: nowrap;
+        
+        @media (max-width: $breakpoint-md) {
+            width: auto;
+            min-width: 100px;
+            text-align: center;
+        }
     }
     
     .checkbox {
@@ -296,8 +372,11 @@
         margin-left: 0.5rem;
         
         @media (max-width: $breakpoint-md) {
-            padding: 0.4rem 0.6rem;
+            padding: 0.4rem 0.5rem;
             font-size: 0.8rem;
+            margin-left: 0.25rem;
+            min-width: 0;
+            white-space: nowrap;
         }
     }
     
