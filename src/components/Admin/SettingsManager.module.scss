@@ -1,0 +1,374 @@
+@use '../../styles/variables' as *;
+
+.settingsDashboard {
+    width: 100%;
+    color: $text-primary;
+    
+    @media (max-width: $breakpoint-md) {
+        padding: 0;
+    }
+}
+
+.dashboardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    @media (max-width: $breakpoint-md) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: $text-primary;
+        font-weight: 600;
+    }
+    
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+        
+        @media (max-width: $breakpoint-md) {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        @media (max-width: $breakpoint-sm) {
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        
+        .tabButton {
+            padding: 0.5rem 0.75rem;
+            background-color: transparent;
+            border: 1px solid $border-color;
+            color: $text-color;
+            border-radius: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all $transition-fast;
+            
+            @media (max-width: $breakpoint-sm) {
+                flex: 1;
+                justify-content: center;
+                font-size: 0.9rem;
+                min-width: 45%;
+            }
+            
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+            
+            &.active {
+                background-color: $primary-color;
+                border-color: $primary-color;
+                color: white;
+                
+                &:hover {
+                    background-color: color.adjust($primary-color, $lightness: -10%);
+                }
+            }
+        }
+    }
+}
+
+.tableContainer {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    border-radius: $border-radius;
+    box-shadow: $shadow-md;
+    background-color: $card-background;
+    padding: 1.5rem;
+    
+    @media (max-width: $breakpoint-md) {
+        padding: 1rem;
+        overflow-x: visible;
+    }
+}
+
+.optionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.optionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: $border-radius-sm;
+    background-color: color.adjust($card-background, $lightness: -3%);
+    border: 1px solid $border-color;
+    transition: background-color $transition-fast;
+    
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+    
+    &.disabled {
+        opacity: 0.7;
+    }
+    
+    .optionDetails {
+        h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: $text-primary;
+        }
+        
+        .optionMeta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: $text-secondary;
+            
+            .metaItem {
+                display: inline-block;
+            }
+        }
+        
+        .defaultBadge {
+            color: $primary-color;
+            font-weight: 500;
+            padding: 0.1rem 0.5rem;
+            background-color: rgba($primary-color, 0.1);
+            border-radius: 4px;
+        }
+        
+        .enabledStatus {
+            color: $success-color;
+        }
+        
+        .disabledStatus {
+            color: $text-secondary;
+        }
+    }
+    
+    .optionActions {
+        display: flex;
+        gap: 0.5rem;
+        
+        button {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all $transition-fast;
+            
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+        
+        .setDefaultButton {
+            background-color: transparent;
+            border: 1px solid $border-color;
+            color: $text-primary;
+            
+            &:hover:not(:disabled) {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+        
+        .editButton {
+            background-color: rgba($primary-color, 0.1);
+            border: none;
+            color: $primary-color;
+            
+            &:hover {
+                background-color: $primary-color;
+                color: white;
+            }
+        }
+        
+        .deleteButton {
+            background-color: rgba($error-color, 0.1);
+            border: none;
+            color: $error-color;
+            
+            &:hover:not(:disabled) {
+                background-color: $error-color;
+                color: white;
+            }
+        }
+        
+        .enableButton {
+            background-color: rgba($success-color, 0.1);
+            border: none;
+            color: $success-color;
+            
+            &:hover {
+                background-color: $success-color;
+                color: white;
+            }
+        }
+        
+        .disableButton {
+            background-color: transparent;
+            border: 1px solid $text-secondary;
+            color: $text-secondary;
+            
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+    }
+    
+    @media (max-width: $breakpoint-md) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        
+        .optionDetails {
+            width: 100%;
+            
+            .optionMeta {
+                margin-top: 0.5rem;
+            }
+        }
+        
+        .optionActions {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            
+            button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    }
+}
+
+.addOptionForm {
+    background-color: color.adjust($card-background, $lightness: -3%);
+    border-radius: $border-radius-sm;
+    padding: 1.5rem;
+    border: 1px solid $border-color;
+    margin-top: 2rem;
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        font-size: 1.2rem;
+        color: $text-primary;
+        font-weight: 500;
+    }
+    
+    .formRow {
+        display: flex;
+        gap: 1rem;
+        
+        @media (max-width: $breakpoint-md) {
+            flex-direction: column;
+        }
+    }
+    
+    .formGroup {
+        margin-bottom: 1rem;
+        flex: 1;
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: $text-secondary;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid $border-color;
+            background-color: color.adjust($card-background, $lightness: -5%);
+            color: $text-primary;
+            border-radius: 4px;
+            
+            &:focus {
+                outline: none;
+                border-color: $primary-color;
+            }
+        }
+    }
+    
+    .formActions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        
+        @media (max-width: $breakpoint-md) {
+            justify-content: stretch;
+            
+            button {
+                flex: 1;
+            }
+        }
+        
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all $transition-fast;
+            
+            @media (max-width: $breakpoint-sm) {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        .cancelButton {
+            background-color: transparent;
+            border: 1px solid $border-color;
+            color: $text-primary;
+            
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+        
+        .submitButton {
+            background-color: $primary-color;
+            border: none;
+            color: white;
+            
+            &:hover {
+                background-color: color.adjust($primary-color, $lightness: -10%);
+            }
+        }
+    }
+}
+
+.paymentNote {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: $border-radius-sm;
+    background-color: rgba($primary-color, 0.1);
+    border-left: 3px solid $primary-color;
+    
+    p {
+        margin: 0.5rem 0;
+        color: $text-secondary;
+        font-size: 0.9rem;
+        
+        &:first-child {
+            margin-top: 0;
+        }
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    
+    @media (max-width: $breakpoint-md) {
+        margin-top: 1.5rem;
+    }
+} 
