@@ -116,7 +116,6 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="app">
-      <Navigation />
       <main className="main-content">
         <Routes>
           <Route 
@@ -159,6 +158,7 @@ const App: React.FC = () => {
       <AdminProvider>
         <CartProvider>
           <SettingsProvider>
+            <Navigation />
             <AppContent />
           </SettingsProvider>
         </CartProvider>
