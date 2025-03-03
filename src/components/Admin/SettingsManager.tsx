@@ -115,7 +115,9 @@ export const SettingsManager: React.FC = () => {
             <div className={styles.tableContainer}>
                 {/* Shipping Options Tab */}
                 {activeTab === 'shipping' && (
-                    <div className={`${styles.shippingSettings} ${styles.forceVisibility}`}>
+                    <div className={`${styles.shippingSettings} ${styles.forceVisibility}`} style={{paddingTop: '60px', marginTop: '30px'}}>
+                        {/* Invisible spacer to push content down */}
+                        <div style={{height: '80px', marginBottom: '20px'}} aria-hidden="true"></div>
                         <div className={styles.optionsList}>
                             {settings.shipping.options.map(option => (
                                 <div key={option.id} className={styles.optionItem}>
@@ -219,7 +221,9 @@ export const SettingsManager: React.FC = () => {
                 
                 {/* Payment Methods Tab */}
                 {activeTab === 'payment' && (
-                    <div className={styles.paymentSettings}>
+                    <div className={`${styles.paymentSettings} ${styles.forceVisibility}`} style={{paddingTop: '60px', marginTop: '30px'}}>
+                        {/* Invisible spacer to push content down */}
+                        <div style={{height: '80px', marginBottom: '20px'}} aria-hidden="true"></div>
                         <div className={styles.optionsList}>
                             {settings.payment.methods.map(method => (
                                 <div key={method.id} className={`${styles.optionItem} ${!method.enabled ? styles.disabled : ''}`}>
