@@ -89,6 +89,9 @@
     @media (max-width: $breakpoint-md) {
         padding: 1rem;
         overflow-x: visible;
+        overflow-y: visible;
+        position: relative;
+        z-index: 1;
     }
 }
 
@@ -346,6 +349,11 @@
             }
         }
     }
+    
+    @media (max-width: $breakpoint-md) {
+        padding: 1rem;
+        margin-bottom: 3rem;
+    }
 }
 
 .paymentNote {
@@ -372,4 +380,21 @@
     @media (max-width: $breakpoint-md) {
         margin-top: 1.5rem;
     }
+}
+
+.shippingSettings {
+    width: 100%;
+    position: relative;
+    overflow: visible;
+    
+    .addOptionForm {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+.paymentSettings {
+    width: 100%;
+    position: relative;
+    overflow: visible;
 } 
