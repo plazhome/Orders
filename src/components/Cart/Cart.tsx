@@ -1,6 +1,8 @@
 import React, { useState, useContext, FormEvent, useEffect } from 'react';
 import { CartContext, CartItem } from '../../context/CartContext';
 import { useSettings } from '../../context/SettingsContext';
+import CityAutocomplete from './CityAutocomplete';
+import { City } from '../../types/settings';
 import styles from './Cart.module.scss';
 
 // Shipping options with pricing
@@ -19,13 +21,14 @@ const PAYMENT_METHODS = [
 
 export const Cart: React.FC = () => {
   const { cartItems, addToCart, removeFromCart, clearCart } = useContext(CartContext);
-  const { settings } = useSettings();
+  const { settings, calculateShippingCost } = useSettings();
   
   // Form fields
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
+  const [cityData, setCityData] = useState<City | null>(null);
   const [postalCode, setPostalCode] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
@@ -39,6 +42,7 @@ export const Cart: React.FC = () => {
   const [orderStep, setOrderStep] = useState<'cart' | 'checkout' | 'confirmation'>('cart');
   const [orderNumber, setOrderNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [outOfDeliveryRange, setOutOfDeliveryRange] = useState(false);
 
   // Set default shipping and payment methods when settings are loaded
   useEffect(() => {
@@ -63,7 +67,23 @@ export const Cart: React.FC = () => {
   const selectedShipping = settings.shipping.options.find(option => option.id === shippingMethod) || 
     (settings.shipping.options.length > 0 ? settings.shipping.options[0] : { id: '', name: '', price: 0, days: '' });
   
-  const shippingCost = selectedShipping?.price || 0;
+  // Calculate shipping cost based on distance if applicable
+  const isDistanceBased = selectedShipping.isDistanceBased === true;
+  const cityDistance = cityData?.distance || 0;
+  
+  let shippingCost = selectedShipping?.price || 0;
+  
+  if (isDistanceBased && cityData && shippingMethod) {
+    const calculatedCost = calculateShippingCost(shippingMethod, cityDistance);
+    
+    if (calculatedCost === -1) {
+      setOutOfDeliveryRange(true);
+    } else {
+      setOutOfDeliveryRange(false);
+      shippingCost = calculatedCost;
+    }
+  }
+  
   const totalPrice = subtotal + shippingCost;
 
   // Generate order number
@@ -90,6 +110,61 @@ export const Cart: React.FC = () => {
     // Update the quantity
     addToCart({ ...item }, quantityDiff);
   };
+  
+  // Handle city selection
+  const handleCityChange = (selectedCity: City) => {
+    setCity(selectedCity.name);
+    setCityData(selectedCity);
+    
+    // Reset shipping method if it was out of range
+    if (outOfDeliveryRange) {
+      // Find a non-distance shipping option or the first available
+      const regularOption = settings.shipping.options.find(opt => !opt.isDistanceBased);
+      if (regularOption) {
+        setShippingMethod(regularOption.id);
+      }
+      setOutOfDeliveryRange(false);
+    }
+  };
+
+  // Handle shipping method change
+  const handleShippingMethodChange = (methodId: string) => {
+    const option = settings.shipping.options.find(opt => opt.id === methodId);
+    
+    // Check if this option is distance-based and we need city data
+    if (option?.isDistanceBased && !cityData) {
+      setFormErrors(prev => ({
+        ...prev,
+        city: 'Please select a city for distance-based shipping'
+      }));
+      return;
+    }
+    
+    // Check if the city is within delivery range
+    if (option?.isDistanceBased && cityData) {
+      const cost = calculateShippingCost(methodId, cityData.distance);
+      if (cost === -1) {
+        setFormErrors(prev => ({
+          ...prev,
+          shippingMethod: `This delivery option is not available for your location (${cityData.distance} km is beyond the ${option.maxDistance} km limit)`
+        }));
+        setOutOfDeliveryRange(true);
+        return;
+      }
+    }
+    
+    // Clear any shipping errors
+    if (formErrors.shippingMethod) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.shippingMethod;
+        return newErrors;
+      });
+    }
+    
+    setShippingMethod(methodId);
+    setOutOfDeliveryRange(false);
+  };
 
   // Validate form fields
   const validateForm = () => {
@@ -106,6 +181,12 @@ export const Cart: React.FC = () => {
     
     // Check if shipping method is selected
     if (!shippingMethod) errors.shippingMethod = 'Please select a shipping method';
+    
+    // Check if selected shipping method is out of range
+    if (outOfDeliveryRange) {
+      const option = settings.shipping.options.find(opt => opt.id === shippingMethod);
+      errors.shippingMethod = `This delivery option is not available for your location (${cityData?.distance} km is beyond the ${option?.maxDistance} km limit)`;
+    }
     
     // Check if payment method is selected
     if (!paymentMethod) errors.paymentMethod = 'Please select a payment method';
@@ -144,109 +225,100 @@ export const Cart: React.FC = () => {
       orderDetails += `Name: ${name}%0D%0A`;
       orderDetails += `Email: ${email}%0D%0A`;
       orderDetails += `Address: ${address}%0D%0A`;
-      orderDetails += `City: ${city}%0D%0A`;
+      orderDetails += `City: ${city}${cityData?.distance ? ` (${cityData.distance} km from store)` : ''}%0D%0A`;
       orderDetails += `Postal Code: ${postalCode}%0D%0A`;
       orderDetails += `Phone: ${phone}%0D%0A`;
       orderDetails += `Message: ${message}%0D%0A`;
-
-      // Construct mailto link with specific email address
-      const subject = encodeURIComponent(`New Order #${orderNumber}`);
-      const body = orderDetails;
-      const mailtoLink = `mailto:plazgr@gmail.com?subject=${subject}&body=${body}`;
-
-      // Open default email client
-      window.location.href = mailtoLink;
       
-      // Move to confirmation step
-      setOrderStep('confirmation');
-      
-      // In a real app, we would make an API call to process the order here
+      // In a real app, here you would send the order to your backend
       // For now, we'll simulate a successful order
+      
+      // Clear cart and move to confirmation step
+      clearCart();
+      setOrderStep('confirmation');
     } catch (error) {
-      console.error('Error processing order:', error);
+      console.error('Error submitting order:', error);
+      setFormErrors({
+        submit: 'There was an error submitting your order. Please try again.'
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handle return to shopping
-  const handleReturnToShopping = () => {
-    clearCart();
-    // Reset form fields
-    setName('');
-    setEmail('');
-    setAddress('');
-    setCity('');
-    setPostalCode('');
-    setPhone('');
-    setMessage('');
-    setShippingMethod(settings.shipping.options.find(option => option.isDefault)?.id || '');
-    setPaymentMethod(settings.payment.methods.find(method => method.isDefault && method.enabled)?.id || '');
-    setOrderStep('cart');
-    setOrderNumber('');
-    window.location.href = '/'; // Navigate to home page
-  };
-
-  // Render cart items
-  const renderCartItems = () => (
-    <ul className={styles.cartList}>
-      {cartItems.map(item => (
-        <li key={item.id} className={styles.cartItem}>
-          <div className={styles.itemImage}>
-            <img src={item.images[0]} alt={item.title} />
-          </div>
-          <div className={styles.itemDetails}>
-            <h3>{item.title}</h3>
-            <p className={styles.itemPrice}>€{item.price.toFixed(2)}</p>
-          </div>
-          <div className={styles.itemActions}>
-            <div className={styles.quantityControl}>
+  // Render the cart items
+  const renderCartItems = () => {
+    if (cartItems.length === 0) {
+      return (
+        <div className={styles.emptyCart}>
+          <p>Your cart is empty.</p>
+          <button onClick={() => window.location.href = '/'}>Continue Shopping</button>
+        </div>
+      );
+    }
+    
+    return (
+      <ul className={styles.cartList}>
+        {cartItems.map((item: CartItem) => (
+          <li key={item.id} className={styles.cartItem}>
+            {item.images && item.images.length > 0 && (
+              <img src={item.images[0]} alt={item.title} className={styles.productImage} />
+            )}
+            
+            <div className={styles.productInfo}>
+              <div className={styles.productTitle}>{item.title}</div>
+              <div className={styles.productPrice}>€{item.price.toFixed(2)}</div>
+            </div>
+            
+            <div className={styles.quantityControls}>
               <button 
-                type="button"
                 onClick={() => handleQuantityChange(item, item.quantity - 1)}
-                className={styles.quantityButton}
+                disabled={item.quantity <= 1}
               >
                 -
               </button>
-              <span className={styles.quantity}>{item.quantity}</span>
-              <button 
-                type="button"
-                onClick={() => handleQuantityChange(item, item.quantity + 1)}
-                className={styles.quantityButton}
-              >
+              <span>{item.quantity}</span>
+              <button onClick={() => handleQuantityChange(item, item.quantity + 1)}>
                 +
               </button>
             </div>
-            <p className={styles.itemTotal}>
+            
+            <div className={styles.itemTotal}>
               €{(item.price * item.quantity).toFixed(2)}
-            </p>
+            </div>
+            
             <button 
-              type="button"
+              className={styles.removeButton}
               onClick={() => removeFromCart(item.id)}
-              className={styles.removeItem}
+              aria-label="Remove item"
             >
-              Remove
+              ✕
             </button>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
-  // Render cart summary
-  const renderCartSummary = () => (
-    <div className={styles.cartSummary}>
-      <h2>Order Summary</h2>
-      <div className={styles.summaryRow}>
-        <span>Subtotal</span>
+  // Render the order summary
+  const renderOrderSummary = () => (
+    <div className={styles.orderSummary}>
+      <div className={styles.totalPrice}>
+        <span>Subtotal:</span>
         <span>€{subtotal.toFixed(2)}</span>
       </div>
-      <div className={styles.summaryRow}>
-        <span>Shipping</span>
-        <span>€{shippingCost.toFixed(2)}</span>
+      
+      <div className={styles.totalPrice}>
+        <span>Shipping:</span>
+        <span>
+          {outOfDeliveryRange 
+            ? 'Not available for your location' 
+            : `€${shippingCost.toFixed(2)}`}
+        </span>
       </div>
-      <div className={`${styles.summaryRow} ${styles.totalRow}`}>
-        <span>Total</span>
+      
+      <div className={styles.totalPrice}>
+        <span>Total:</span>
         <span>€{totalPrice.toFixed(2)}</span>
       </div>
       {orderStep === 'cart' && (
@@ -313,14 +385,18 @@ export const Cart: React.FC = () => {
         <div className={styles.formRow}>
           <div className={styles.formGroup}>
             <label htmlFor="city">City</label>
-            <input
-              type="text"
-              id="city"
+            <CityAutocomplete
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={handleCityChange}
               className={formErrors.city ? styles.errorInput : ''}
+              errorText={formErrors.city}
             />
-            {formErrors.city && <span className={styles.errorText}>{formErrors.city}</span>}
+            
+            {cityData && cityData.distance !== undefined && (
+              <div className={styles.distanceShippingInfo}>
+                Distance from store: <strong>{cityData.distance} km</strong>
+              </div>
+            )}
           </div>
           
           <div className={styles.formGroup}>
@@ -352,192 +428,143 @@ export const Cart: React.FC = () => {
       </div>
       
       <div className={styles.formSection}>
-        <h2>Shipping Method</h2>
-        {formErrors.shippingMethod && (
-          <span className={styles.errorText}>{formErrors.shippingMethod}</span>
-        )}
-        <div className={styles.optionsGroup}>
-          {settings.shipping.options.map(option => (
-            <div className={styles.optionItem} key={option.id}>
-              <input
-                type="radio"
-                id={`shipping-${option.id}`}
-                name="shipping"
-                value={option.id}
-                checked={shippingMethod === option.id}
-                onChange={(e) => setShippingMethod(e.target.value)}
-              />
-              <label htmlFor={`shipping-${option.id}`}>
-                <span className={styles.optionName}>{option.name}</span>
-                <span className={styles.optionDetails}>
-                  {option.price === 0 ? 'Free' : `€${option.price.toFixed(2)}`} - {option.days} business day{option.days !== '1' ? 's' : ''}
-                </span>
-              </label>
-            </div>
-          ))}
+        <div className={styles.shippingOptions}>
+          <h3>Shipping Method</h3>
+          <div className={styles.optionsList}>
+            {settings.shipping.options.map(option => {
+              // Get the shipping cost for this option
+              const optionPrice = option.isDistanceBased && cityData
+                ? calculateShippingCost(option.id, cityData.distance)
+                : option.price;
+                
+              // Skip options that are out of range
+              if (optionPrice === -1) return null;
+              
+              return (
+                <div 
+                  key={option.id}
+                  className={`${styles.optionItem} ${shippingMethod === option.id ? styles.selected : ''}`}
+                  onClick={() => handleShippingMethodChange(option.id)}
+                >
+                  <input 
+                    type="radio" 
+                    id={`shipping-${option.id}`}
+                    name="shippingMethod"
+                    value={option.id}
+                    checked={shippingMethod === option.id}
+                    onChange={() => handleShippingMethodChange(option.id)}
+                  />
+                  <div className={styles.optionDetails}>
+                    <div className={styles.optionName}>{option.name}</div>
+                    <div className={styles.optionDescription}>
+                      Delivery in {option.days} days
+                      {option.isDistanceBased && cityData && (
+                        <span> • Based on {cityData.distance} km distance</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.optionPrice}>
+                    €{optionPrice.toFixed(2)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {formErrors.shippingMethod && (
+            <span className={styles.errorText}>{formErrors.shippingMethod}</span>
+          )}
+        </div>
+        
+        <div className={styles.paymentOptions}>
+          <h3>Payment Method</h3>
+          <div className={styles.optionsList}>
+            {settings.payment.methods
+              .filter(method => method.enabled)
+              .map(method => (
+                <div 
+                  key={method.id}
+                  className={`${styles.optionItem} ${paymentMethod === method.id ? styles.selected : ''}`}
+                  onClick={() => setPaymentMethod(method.id)}
+                >
+                  <input 
+                    type="radio" 
+                    id={`payment-${method.id}`}
+                    name="paymentMethod"
+                    value={method.id}
+                    checked={paymentMethod === method.id}
+                    onChange={() => setPaymentMethod(method.id)}
+                  />
+                  <div className={styles.optionDetails}>
+                    <div className={styles.optionName}>{method.name}</div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          {formErrors.paymentMethod && (
+            <span className={styles.errorText}>{formErrors.paymentMethod}</span>
+          )}
         </div>
       </div>
       
       <div className={styles.formSection}>
-        <h2>Payment Method</h2>
-        {formErrors.paymentMethod && (
-          <span className={styles.errorText}>{formErrors.paymentMethod}</span>
-        )}
-        <div className={styles.optionsGroup}>
-          {settings.payment.methods
-            .filter(method => method.enabled)
-            .map(method => (
-              <div className={styles.optionItem} key={method.id}>
-                <input
-                  type="radio"
-                  id={`payment-${method.id}`}
-                  name="payment"
-                  value={method.id}
-                  checked={paymentMethod === method.id}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                />
-                <label htmlFor={`payment-${method.id}`}>
-                  <span className={styles.optionName}>{method.name}</span>
-                </label>
-              </div>
-            ))}
-        </div>
-      </div>
-      
-      <div className={styles.formSection}>
-        <h2>Additional Notes</h2>
         <div className={styles.formGroup}>
+          <label htmlFor="message">Order Notes (Optional)</label>
           <textarea
             id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Special instructions for delivery, gift messages, etc."
+            rows={4}
           />
         </div>
       </div>
+      
+      {formErrors.submit && (
+        <div className={styles.errorMessage}>{formErrors.submit}</div>
+      )}
       
       <div className={styles.formActions}>
         <button 
           type="button" 
           onClick={() => setOrderStep('cart')}
-          className={styles.backButton}
+          className={styles.cancelButton}
         >
           Back to Cart
         </button>
         <button 
           type="submit" 
           className={styles.submitButton}
-          disabled={isSubmitting}
+          disabled={isSubmitting || outOfDeliveryRange}
         >
-          {isSubmitting ? 'Processing...' : 'Complete Order'}
+          {isSubmitting ? 'Processing...' : 'Place Order'}
         </button>
       </div>
     </form>
   );
 
-  // Render order confirmation
+  // Render the order confirmation
   const renderOrderConfirmation = () => (
-    <div className={styles.orderConfirmation}>
-      <div className={styles.confirmationIcon}>
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="2" />
-          <path d="M6 12L10 16L18 8" stroke="currentColor" strokeWidth="2" />
-        </svg>
-      </div>
-      <h2>Order Confirmed!</h2>
-      <p className={styles.orderNumber}>Order #{orderNumber}</p>
-      <p className={styles.confirmationMessage}>
-        Thank you for your purchase! Your email client has been opened to finalize your order.
-      </p>
-      <p>
-        You'll receive a confirmation email with your order details shortly.
-      </p>
-      <button 
-        type="button"
-        onClick={handleReturnToShopping}
-        className={styles.continueButton}
-      >
+    <div className={styles.orderSuccess}>
+      <h2>Thank you for your order!</h2>
+      <p>Your order has been placed successfully. We have sent a confirmation email with all the details.</p>
+      <div className={styles.orderNumber}>Order #{orderNumber}</div>
+      <p>You will receive updates about your order status via email.</p>
+      <button onClick={() => window.location.href = '/'}>
         Continue Shopping
-      </button>
-    </div>
-  );
-
-  // Render empty cart
-  const renderEmptyCart = () => (
-    <div className={styles.emptyCart}>
-      <div className={styles.emptyCartIcon}>
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-          <path d="M3 6H5H21" stroke="currentColor" strokeWidth="2" />
-          <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" />
-        </svg>
-      </div>
-      <h2>Your cart is empty</h2>
-      <p>Looks like you haven't added any products to your cart yet.</p>
-      <button 
-        type="button"
-        onClick={() => window.location.href = '/'}
-        className={styles.shopButton}
-      >
-        Start Shopping
       </button>
     </div>
   );
 
   return (
     <div className={styles.cartContainer}>
-      <h1 className={styles.pageTitle}>
-        {orderStep === 'cart' ? 'Shopping Cart' : 
-         orderStep === 'checkout' ? 'Checkout' : 
-         'Order Complete'}
-      </h1>
+      <h1>{orderStep === 'cart' ? 'Your Cart' : orderStep === 'checkout' ? 'Checkout' : 'Order Confirmation'}</h1>
       
-      <div className={styles.cartContent}>
-        {orderStep === 'cart' && (
-          <>
-            {cartItems.length === 0 ? (
-              renderEmptyCart()
-            ) : (
-              <>
-                <div className={styles.cartItems}>
-                  {renderCartItems()}
-                  <div className={styles.cartActions}>
-                    <button 
-                      type="button"
-                      onClick={() => window.location.href = '/'}
-                      className={styles.continueShoppingButton}
-                    >
-                      Continue Shopping
-                    </button>
-                    <button 
-                      type="button"
-                      onClick={clearCart}
-                      className={styles.clearCartButton}
-                    >
-                      Clear Cart
-                    </button>
-                  </div>
-                </div>
-                <div className={styles.cartSummaryContainer}>
-                  {renderCartSummary()}
-                </div>
-              </>
-            )}
-          </>
-        )}
-        
-        {orderStep === 'checkout' && (
-          <div className={styles.checkoutContainer}>
-            <div className={styles.checkoutMain}>
-              {renderCheckoutForm()}
-            </div>
-            <div className={styles.checkoutSummary}>
-              {renderCartSummary()}
-            </div>
-          </div>
-        )}
-        
-        {orderStep === 'confirmation' && renderOrderConfirmation()}
-      </div>
+      {orderStep === 'cart' && renderCartItems()}
+      {orderStep === 'checkout' && renderCartItems()}
+      {orderStep === 'confirmation' && renderOrderConfirmation()}
+      
+      {orderStep !== 'confirmation' && renderOrderSummary()}
+      {orderStep === 'checkout' && renderCheckoutForm()}
     </div>
   );
 }; 
