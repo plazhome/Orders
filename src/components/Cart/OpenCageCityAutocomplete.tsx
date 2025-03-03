@@ -39,7 +39,14 @@ const FALLBACK_GREEK_CITIES: City[] = [
   { name: "Kalamata", lat: "37.0389", lng: "22.1142" }
 ];
 
-const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
+/**
+ * City Autocomplete component using OpenCage API
+ * 
+ * To use this component:
+ * 1. Sign up for an API key at https://opencagedata.com/
+ * 2. Add your API key to the API_CONFIG.OPENCAGE_API_KEY field
+ */
+const OpenCageCityAutocomplete: React.FC<CityAutocompleteProps> = ({
   value,
   onChange,
   onError,
@@ -109,7 +116,7 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
     setShowSuggestions(true);
   };
 
-  // Search for cities using GeoNames API
+  // Search for cities using OpenCage API
   const searchCities = async (query: string) => {
     if (query.length < 2) {
       setSuggestions([]);
@@ -126,12 +133,19 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
     }
     
     try {
-      // Use the API config with the GeoNames username
-      const username = API_CONFIG.GEONAMES_USERNAME;
+      // This should be added to API_CONFIG in src/config/api.ts
+      const apiKey = API_CONFIG.OPENCAGE_API_KEY || '';
       
-      // Use GeoNames API to search for Greek cities
+      if (!apiKey) {
+        console.warn('OpenCage API key not found. Falling back to local data.');
+        setApiUnavailable(true);
+        searchLocalCities(query);
+        return;
+      }
+      
+      // OpenCage API query for Greek cities
       const response = await fetch(
-        `${API_CONFIG.GEONAMES_URL}/searchJSON?name_startsWith=${encodeURIComponent(query)}&country=GR&featureClass=P&maxRows=10&username=${username}`
+        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&countrycode=gr&limit=10&key=${apiKey}`
       );
       
       if (!response.ok) {
@@ -140,35 +154,44 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
       
       const data = await response.json();
       
-      // Check if API returned an error status
-      if (data.status && data.status.value) {
-        console.warn('GeoNames API error:', data.status.message);
-        setApiUnavailable(true);
-        searchLocalCities(query);
-        return;
-      }
-      
-      if (data.geonames && data.geonames.length > 0) {
-        const cities = data.geonames.map((city: any) => {
-          const distance = calculateDistance(
-            STORE_LOCATION.lat, 
-            STORE_LOCATION.lng, 
-            parseFloat(city.lat), 
-            parseFloat(city.lng)
-          );
-          
-          return {
-            name: city.name,
-            lat: city.lat,
-            lng: city.lng,
-            distance
-          };
-        });
+      if (data.results && data.results.length > 0) {
+        const cities = data.results
+          .filter((result: any) => 
+            // Filter for city-like results
+            result.components._type === "city" || 
+            result.components._type === "town" || 
+            result.components._type === "village"
+          )
+          .map((result: any) => {
+            const cityName = result.components.city || 
+                           result.components.town || 
+                           result.components.village || 
+                           result.formatted.split(',')[0];
+            
+            const distance = calculateDistance(
+              STORE_LOCATION.lat, 
+              STORE_LOCATION.lng, 
+              result.geometry.lat, 
+              result.geometry.lng
+            );
+            
+            return {
+              name: cityName,
+              lat: String(result.geometry.lat),
+              lng: String(result.geometry.lng),
+              distance
+            };
+          });
         
         setSuggestions(cities);
         setShowSuggestions(true);
+        
+        if (cities.length === 0) {
+          // If no city-like results, try fallback
+          searchLocalCities(query);
+        }
       } else {
-        // No cities found from API, try fallback
+        // No results from API, try fallback
         searchLocalCities(query);
       }
     } catch (error) {
@@ -245,4 +268,4 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
   );
 };
 
-export default CityAutocomplete; 
+export default OpenCageCityAutocomplete; 
