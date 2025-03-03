@@ -7,21 +7,10 @@
     background-color: $card-background;
     border-radius: $border-radius;
     color: $text-primary;
-    
-    @media (max-width: $breakpoint-sm) {
-        margin: 1rem auto;
-        padding: 1.5rem;
-        max-width: 90%;
-    }
 
     h1 {
         text-align: center;
         margin-bottom: 2rem;
-        
-        @media (max-width: $breakpoint-sm) {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
     }
 
     .loading {
@@ -115,14 +104,12 @@
     @media (max-width: $breakpoint-md) {
         padding: 1rem;
     }
-    
-    @media (max-width: $breakpoint-sm) {
-        padding: 0.75rem;
-    }
 }
 
 .tabContainer {
     margin-bottom: 2rem;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .tabs {
@@ -131,6 +118,8 @@
     margin-bottom: 2rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+    min-width: min-content;
     
     @media (max-width: $breakpoint-md) {
         margin-bottom: 1.5rem;
@@ -177,6 +166,8 @@
     background-color: $card-background;
     border-radius: $border-radius;
     padding: 2rem;
+    width: 100%;
+    overflow-x: auto;
     
     @media (max-width: $breakpoint-md) {
         padding: 1.5rem;
@@ -199,10 +190,6 @@
         margin-bottom: 1rem;
         font-size: 1.5rem;
         color: $primary-color;
-        
-        @media (max-width: $breakpoint-sm) {
-            font-size: 1.25rem;
-        }
     }
 }
 
@@ -239,18 +226,6 @@
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
-    
-    @media (max-width: $breakpoint-sm) {
-        margin-bottom: 1rem;
-        
-        input, textarea, select {
-            padding: 0.6rem;
-        }
-        
-        textarea {
-            min-height: 80px;
-        }
-    }
 }
 
 .header {
@@ -263,14 +238,6 @@
         margin: 0;
         font-size: 2rem;
         color: $text-primary;
-        
-        @media (max-width: $breakpoint-md) {
-            font-size: 1.75rem;
-        }
-        
-        @media (max-width: $breakpoint-sm) {
-            font-size: 1.5rem;
-        }
     }
     
     .logoutButton {
@@ -285,22 +252,6 @@
         &:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-        
-        @media (max-width: $breakpoint-sm) {
-            padding: 0.4rem 0.75rem;
-            font-size: 0.9rem;
-        }
-    }
-    
-    @media (max-width: $breakpoint-sm) {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        
-        .logoutButton {
-            align-self: flex-end;
-        }
     }
 }
 
@@ -308,19 +259,12 @@
     h2 {
         margin-bottom: 1.5rem;
         color: $primary-color;
-        
-        @media (max-width: $breakpoint-sm) {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
     }
     
     .settingsTabs {
         display: flex;
         margin-bottom: 1.5rem;
         border-bottom: 1px solid $border-color;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
         
         button {
             padding: 0.75rem 1.5rem;
@@ -330,7 +274,6 @@
             cursor: pointer;
             border-bottom: 2px solid transparent;
             transition: all $transition-fast;
-            white-space: nowrap;
             
             &:hover {
                 color: $text-primary;
@@ -340,20 +283,6 @@
                 color: $primary-color;
                 border-bottom-color: $primary-color;
             }
-            
-            @media (max-width: $breakpoint-md) {
-                padding: 0.6rem 1.25rem;
-                font-size: 0.9rem;
-            }
-            
-            @media (max-width: $breakpoint-sm) {
-                padding: 0.5rem 1rem;
-                font-size: 0.85rem;
-            }
-        }
-        
-        @media (max-width: $breakpoint-sm) {
-            margin-bottom: 1rem;
         }
     }
     
@@ -362,11 +291,6 @@
         flex-direction: column;
         gap: 1rem;
         margin-bottom: 2rem;
-        
-        @media (max-width: $breakpoint-sm) {
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
     }
     
     .optionItem {
@@ -386,11 +310,6 @@
             h3 {
                 margin: 0 0 0.5rem 0;
                 font-size: 1.1rem;
-                
-                @media (max-width: $breakpoint-sm) {
-                    font-size: 1rem;
-                    margin-bottom: 0.3rem;
-                }
             }
             
             .optionMeta {
@@ -398,12 +317,6 @@
                 gap: 1rem;
                 font-size: 0.9rem;
                 color: $text-secondary;
-                
-                @media (max-width: $breakpoint-sm) {
-                    font-size: 0.8rem;
-                    flex-wrap: wrap;
-                    gap: 0.5rem;
-                }
             }
             
             .defaultBadge {
@@ -434,11 +347,6 @@
                 &:disabled {
                     opacity: 0.5;
                     cursor: not-allowed;
-                }
-                
-                @media (max-width: $breakpoint-sm) {
-                    padding: 0.4rem 0.6rem;
-                    font-size: 0.8rem;
                 }
             }
             
@@ -494,7 +402,6 @@
             
             @media (max-width: $breakpoint-md) {
                 flex-direction: column;
-                gap: 0.4rem;
             }
         }
         
@@ -502,13 +409,11 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 1rem;
-            padding: 0.75rem;
             
             .optionActions {
                 width: 100%;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 0.5rem;
                 
                 button {
                     width: 100%;
@@ -529,11 +434,6 @@
             margin-bottom: 1.5rem;
             font-size: 1.2rem;
             color: $text-primary;
-            
-            @media (max-width: $breakpoint-sm) {
-                font-size: 1.1rem;
-                margin-bottom: 1rem;
-            }
         }
         
         .formGroup {
@@ -551,11 +451,6 @@
                 border-radius: 4px;
                 cursor: pointer;
                 transition: all $transition-fast;
-                
-                @media (max-width: $breakpoint-sm) {
-                    padding: 0.6rem 1rem;
-                    font-size: 0.9rem;
-                }
             }
             
             .cancelButton {
@@ -577,19 +472,6 @@
                     background-color: darken($primary-color, 10%);
                 }
             }
-            
-            @media (max-width: $breakpoint-sm) {
-                flex-direction: column-reverse;
-                gap: 0.75rem;
-                
-                button {
-                    width: 100%;
-                }
-            }
-        }
-        
-        @media (max-width: $breakpoint-sm) {
-            padding: 1rem;
         }
     }
     
@@ -612,15 +494,6 @@
             &:last-child {
                 margin-bottom: 0;
             }
-            
-            @media (max-width: $breakpoint-sm) {
-                font-size: 0.85rem;
-            }
-        }
-        
-        @media (max-width: $breakpoint-sm) {
-            margin-top: 1.5rem;
-            padding: 0.75rem;
         }
     }
 } 

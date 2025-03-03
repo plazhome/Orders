@@ -59,9 +59,6 @@ $z-index-modal: 1040;
 $z-index-popover: 1050;
 $z-index-tooltip: 1060;
 
-// Navigation colors
-$navbar-bg: #1a1a1a;
-
 // Function to replace deprecated darken()
 @function darken-custom($color, $amount) {
     @return color.adjust($color, $lightness: -$amount);
