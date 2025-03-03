@@ -442,4 +442,40 @@
         padding-top: 8rem !important;
         margin-top: 4rem !important;
     }
+}
+
+.mobileNavLinks {
+    display: none;
+    width: 100%;
+    background-color: $navbar-bg;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: $border-radius-sm;
+    
+    @media (max-width: $breakpoint-md) {
+        display: flex;
+    }
+    
+    .navLink {
+        color: $text-secondary;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: $border-radius;
+        font-size: 0.9rem;
+        
+        &:hover {
+            color: $text-primary;
+            background-color: rgba($primary-color, 0.1);
+        }
+        
+        &.active {
+            color: $primary-color;
+            background-color: rgba($primary-color, 0.1);
+        }
+    }
 } 

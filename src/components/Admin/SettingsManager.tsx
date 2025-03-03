@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useSettings } from '../../context/SettingsContext';
 import { ShippingOption, PaymentMethod } from '../../types/settings';
 import styles from './SettingsManager.module.scss';
+import { Link } from 'react-router-dom';
+import { CartContext } from '../../context/CartContext';
+import { useContext } from 'react';
 
 export const SettingsManager: React.FC = () => {
     const { 
@@ -13,6 +16,8 @@ export const SettingsManager: React.FC = () => {
         setDefaultShippingOption,
         setDefaultPaymentMethod
     } = useSettings();
+    
+    const { totalCount } = useContext(CartContext);
     
     // Local state for form handling
     const [activeTab, setActiveTab] = useState<'shipping' | 'payment'>('shipping');
@@ -94,8 +99,13 @@ export const SettingsManager: React.FC = () => {
 
     return (
         <div className={styles.settingsDashboard}>
-            {/* Extra top spacer for navigation */}
-            <div style={{ height: '80px', width: '100%' }} aria-hidden="true"></div>
+            {/* Mobile Navigation Links (visible only on mobile) */}
+            <div className={styles.mobileNavLinks}>
+                <Link to="/" className={styles.navLink}>Products</Link>
+                <Link to="/admin/dashboard" className={`${styles.navLink} ${styles.active}`}>Dashboard</Link>
+                <Link to="/admin/dashboard" className={`${styles.navLink} ${styles.active}`}>Store Settings</Link>
+                <Link to="/cart" className={styles.navLink}>Cart ({totalCount})</Link>
+            </div>
             
             <div className={styles.dashboardHeader}>
                 <h2>Store Settings</h2>
