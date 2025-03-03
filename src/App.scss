@@ -94,12 +94,16 @@ body {
   background-color: $background-dark;
   margin: 0;
   padding: 0;
-  padding-top: 70px; // Increased padding to account for fixed navigation height
+  padding-top: 70px; // For desktop navigation height
 
   @media (max-width: $breakpoint-md) {
     padding: 0.5rem 0;
-    padding-top: 70px; // Added padding-top for mobile as well
+    padding-top: 90px; // Increased padding for tablet navigation
     margin: 0;
+  }
+  
+  @media (max-width: $breakpoint-sm) {
+    padding-top: 150px; // Further increased padding for mobile navigation with multiple rows
   }
 }
 
