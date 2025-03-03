@@ -98,12 +98,12 @@ body {
 
   @media (max-width: $breakpoint-md) {
     padding: 0.5rem 0;
-    padding-top: 90px; // Increased padding for tablet navigation
+    padding-top: 120px; // Significantly increased padding for tablet navigation
     margin: 0;
   }
   
   @media (max-width: $breakpoint-sm) {
-    padding-top: 180px; // Further increased padding for mobile navigation with multiple rows
+    padding-top: 210px; // Further increased padding for mobile navigation with multiple rows
   }
 }
 

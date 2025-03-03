@@ -17,10 +17,13 @@
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
+    position: relative;
+    z-index: 2;
 
     @media (max-width: $breakpoint-md) {
         flex-direction: column;
         align-items: stretch;
+        margin-bottom: 2rem;
     }
     
     h2 {
@@ -33,15 +36,19 @@
     .actions {
         display: flex;
         gap: 0.5rem;
+        position: relative;
+        z-index: 2;
         
         @media (max-width: $breakpoint-md) {
             width: 100%;
             justify-content: space-between;
+            margin-top: 1rem;
         }
         
         @media (max-width: $breakpoint-sm) {
             flex-wrap: wrap;
-            justify-content: flex-start;
+            justify-content: center;
+            gap: 1rem;
         }
         
         .tabButton {
@@ -55,7 +62,8 @@
             transition: all $transition-fast;
             
             @media (max-width: $breakpoint-sm) {
-                flex: 1;
+                flex: 0 0 auto;
+                padding: 0.6rem 1rem;
                 justify-content: center;
                 font-size: 0.9rem;
                 min-width: 45%;
@@ -69,6 +77,7 @@
                 background-color: $primary-color;
                 border-color: $primary-color;
                 color: white;
+                font-weight: 600;
                 
                 &:hover {
                     background-color: darken($primary-color, 10%);
@@ -397,4 +406,27 @@
     width: 100%;
     position: relative;
     overflow: visible;
+}
+
+/* Force visibility class to ensure everything appears properly */
+.forceVisibility {
+    padding-top: 2rem;
+    margin-top: 1rem;
+    transform: translateZ(0); /* Creates a new stacking context */
+    
+    &::before {
+        content: '';
+        display: table; /* Ensure proper spacing */
+        clear: both;
+    }
+    
+    @media (max-width: $breakpoint-md) {
+        padding-top: 3rem;
+        margin-top: 1.5rem;
+    }
+    
+    @media (max-width: $breakpoint-sm) {
+        padding-top: 4rem;
+        margin-top: 2rem;
+    }
 } 

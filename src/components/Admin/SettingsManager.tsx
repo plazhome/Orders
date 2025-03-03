@@ -115,7 +115,7 @@ export const SettingsManager: React.FC = () => {
             <div className={styles.tableContainer}>
                 {/* Shipping Options Tab */}
                 {activeTab === 'shipping' && (
-                    <div className={styles.shippingSettings}>
+                    <div className={`${styles.shippingSettings} ${styles.forceVisibility}`}>
                         <div className={styles.optionsList}>
                             {settings.shipping.options.map(option => (
                                 <div key={option.id} className={styles.optionItem}>
