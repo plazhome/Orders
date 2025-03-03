@@ -410,8 +410,10 @@
 
 /* Force visibility class to ensure everything appears properly */
 .forceVisibility {
-    padding-top: 2rem;
-    margin-top: 1rem;
+    padding-top: 5rem !important;
+    margin-top: 2rem !important;
+    position: relative !important;
+    z-index: 1 !important; /* Lower than navigation */
     transform: translateZ(0); /* Creates a new stacking context */
     
     &::before {
@@ -420,13 +422,24 @@
         clear: both;
     }
     
+    &::after {
+        content: '';
+        display: block;
+        height: 90px; /* Extra space for navigation */
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+    
     @media (max-width: $breakpoint-md) {
-        padding-top: 3rem;
-        margin-top: 1.5rem;
+        padding-top: 7rem !important;
+        margin-top: 3rem !important;
     }
     
     @media (max-width: $breakpoint-sm) {
-        padding-top: 4rem;
-        margin-top: 2rem;
+        padding-top: 8rem !important;
+        margin-top: 4rem !important;
     }
 } 

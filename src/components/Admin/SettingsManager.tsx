@@ -94,6 +94,9 @@ export const SettingsManager: React.FC = () => {
 
     return (
         <div className={styles.settingsDashboard}>
+            {/* Extra top spacer for navigation */}
+            <div style={{ height: '80px', width: '100%' }} aria-hidden="true"></div>
+            
             <div className={styles.dashboardHeader}>
                 <h2>Store Settings</h2>
                 <div className={styles.actions}>
