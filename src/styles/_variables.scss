@@ -22,6 +22,7 @@ $background-color: $background-dark;
 $background-color-light: lighten($background-dark, 5%);
 $card-bg-color: $card-background;
 $border-color: rgba(255, 255, 255, 0.1);
+$navbar-bg: $background-dark; // Added navbar background color
 
 // Spacing
 $spacing-xs: 0.25rem;
