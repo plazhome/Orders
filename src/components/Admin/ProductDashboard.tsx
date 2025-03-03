@@ -331,9 +331,6 @@ export const ProductDashboard: React.FC<ProductDashboardProps> = ({ onProductsCh
                 </div>
             ) : (
                 <>
-                    <div className={styles.mobileScrollHint}>
-                        <span>Swipe to see more →</span>
-                    </div>
                     <div className={styles.tableContainer}>
                         <table className={styles.productTable}>
                             <thead>
@@ -377,7 +374,7 @@ export const ProductDashboard: React.FC<ProductDashboardProps> = ({ onProductsCh
                             </thead>
                             <tbody>
                                 {currentProducts.map(product => (
-                                    <tr key={product.id}>
+                                    <tr key={product.id} className={selectedProducts.includes(product.id) ? styles.selected : ''}>
                                         <td className={styles.checkboxCell}>
                                             <input
                                                 type="checkbox"
@@ -393,11 +390,21 @@ export const ProductDashboard: React.FC<ProductDashboardProps> = ({ onProductsCh
                                                 className={styles.productThumbnail}
                                             />
                                         </td>
-                                        <td>{product.title}</td>
-                                        <td className={styles.priceCell}>€{product.price.toFixed(2)}</td>
-                                        <td>{product.category}</td>
-                                        <td className={styles.stockCell}>{product.stock}</td>
-                                        <td>{formatDate(product.createdAt)}</td>
+                                        <td data-label="Title">
+                                            {product.title}
+                                        </td>
+                                        <td className={styles.priceCell} data-label="Price">
+                                            €{product.price.toFixed(2)}
+                                        </td>
+                                        <td data-label="Category">
+                                            {product.category}
+                                        </td>
+                                        <td className={styles.stockCell} data-label="Stock">
+                                            {product.stock}
+                                        </td>
+                                        <td data-label="Created">
+                                            {formatDate(product.createdAt)}
+                                        </td>
                                         <td className={styles.actionsCell}>
                                             <button 
                                                 className={styles.editButton}

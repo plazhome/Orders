@@ -195,24 +195,6 @@
 
 .mobileScrollHint {
     display: none;
-    margin-bottom: 0.5rem;
-    text-align: right;
-    font-size: 0.8rem;
-    color: $text-secondary;
-    opacity: 0.8;
-    animation: fadeInOut 2s infinite;
-    
-    @media (max-width: $breakpoint-md) {
-        display: block;
-    }
-    
-    span {
-        display: inline-flex;
-        align-items: center;
-        padding: 0.25rem 0.5rem;
-        background-color: rgba($card-background, 0.7);
-        border-radius: $border-radius-sm;
-    }
 }
 
 @keyframes fadeInOut {
@@ -225,25 +207,9 @@
     margin-bottom: 1.5rem;
     border-radius: $border-radius;
     box-shadow: $shadow-md;
-    -webkit-overflow-scrolling: touch; /* Improves scroll on iOS */
-    scrollbar-width: thin; /* For Firefox */
     
-    /* Better visible scrolling indicator on mobile */
     @media (max-width: $breakpoint-md) {
-        position: relative;
-        
-        &::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 20px;
-            background: linear-gradient(to right, transparent, rgba($background-dark, 0.8));
-            pointer-events: none;
-            opacity: 0.7;
-            z-index: 1;
-        }
+        overflow-x: visible;
     }
 }
 
@@ -251,10 +217,37 @@
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 2rem;
-    min-width: 800px; // Ensures table is scrollable on small screens
     
     @media (max-width: $breakpoint-md) {
+        display: block;
+        min-width: auto;
         margin-bottom: 1rem;
+        border: none;
+    }
+    
+    thead {
+        @media (max-width: $breakpoint-md) {
+            display: none; // Hide table headers on mobile
+        }
+    }
+    
+    tbody {
+        @media (max-width: $breakpoint-md) {
+            display: block;
+        }
+    }
+    
+    tr {
+        @media (max-width: $breakpoint-md) {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: $card-background;
+            border-radius: $border-radius;
+            box-shadow: $shadow-sm;
+            position: relative;
+        }
     }
     
     th, td {
@@ -263,7 +256,8 @@
         text-align: left;
         
         @media (max-width: $breakpoint-md) {
-            padding: 0.5rem 0.4rem;
+            padding: 0.5rem;
+            border-bottom: none;
             font-size: 0.9rem;
         }
     }
@@ -278,11 +272,70 @@
         vertical-align: middle;
         
         @media (max-width: $breakpoint-md) {
-            &:not(.imageCell):not(.checkboxCell) {
-                max-width: 120px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+            display: flex;
+            width: 100%;
+            text-align: left;
+            padding: 0.3rem 0.5rem;
+            
+            &::before {
+                content: attr(data-label);
+                font-weight: bold;
+                width: 40%;
+                color: $text-secondary;
+            }
+            
+            &.imageCell {
+                width: 80px;
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0;
+                
+                &::before {
+                    display: none;
+                }
+            }
+            
+            &:nth-of-type(3) { // Title cell
+                font-weight: 600;
+                font-size: 1rem;
+                margin-right: 90px; // Make room for the image
+                width: calc(100% - 90px);
+                padding-left: 0.5rem;
+                padding-bottom: 0.8rem;
+                
+                &::before {
+                    display: none;
+                }
+            }
+            
+            &.checkboxCell {
+                width: auto;
+                padding-left: 0;
+                padding-top: 0;
+                
+                &::before {
+                    display: none;
+                }
+            }
+            
+            &.actionsCell {
+                justify-content: flex-start;
+                margin-top: 0.5rem;
+                padding-top: 0.5rem;
+                border-top: 1px solid $border-color;
+                
+                &::before {
+                    display: none;
+                }
+                
+                .editButton, .deleteButton {
+                    @media (max-width: $breakpoint-md) {
+                        padding: 0.5rem 0.75rem;
+                        margin: 0;
+                        margin-right: 0.5rem;
+                    }
+                }
             }
         }
     }
