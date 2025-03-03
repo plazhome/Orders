@@ -471,6 +471,17 @@
     font-size: 0.8rem;
   }
   
+  .apiNotice {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 0.7rem;
+    padding: 2px 4px;
+    background-color: rgba($warning-color, 0.1);
+    color: $warning-color;
+    border-radius: $border-radius-sm;
+  }
+  
   .suggestionsList {
     position: absolute;
     width: 100%;
